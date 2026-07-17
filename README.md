@@ -29,4 +29,32 @@ Script WhatsApp Bot Auto-Promosi & Broadcast berfitur canggih yang dirancang khu
 6.  Buka aplikasi WhatsApp di HP Anda > **Perangkat Tertaut (Linked Devices)** > Scan QR Code tersebut.
 7.  **Selesai!** Ketik `.menu` di WhatsApp Anda untuk mulai menggunakan bot.
 
+---
+
+## 🖥️ Cara Install di VPS (Ubuntu / Debian)
+
+Jika Anda ingin menjalankan bot ini di VPS Anda sendiri secara 24 jam penuh tanpa panel Pterodactyl, jalankan satu per satu perintah di bawah ini melalui terminal SSH:
+
+```bash
+# 1. Update VPS & Install dependensi dasar
+apt update && apt upgrade -y
+apt install -y curl git zip unzip npm
+
+# 2. Install Node.js v18 (Atau versi lebih tinggi)
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+apt install -y nodejs
+
+# 3. Download dan Install Bot
+git clone https://github.com/WBVPN/WABot-Wibu.git
+cd WABot-Wibu
+npm install
+
+# 4. Install PM2 agar bot berjalan 24 jam nonstop di latar belakang
+npm install -g pm2
+pm2 start index.js --name "wibu-bot"
+pm2 save
+pm2 startup
+```
+*Setelah menjalankan `pm2 start`, akan muncul QR Code di terminal. Scan dengan WhatsApp Anda.*
+
 > *© 2026 - Dioptimalkan eksklusif untuk WibuVpnStore*
