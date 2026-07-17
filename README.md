@@ -24,10 +24,11 @@ Script WhatsApp Bot Auto-Promosi & Broadcast berfitur canggih yang dirancang khu
 1.  **Download Script:** Klik tombol hijau `Code` di atas, lalu pilih **Download ZIP**.
 2.  **Upload ke Panel:** Buka panel Pterodactyl Anda, masuk ke tab **Files**.
 3.  **Ekstrak File:** Upload file ZIP tersebut, klik titik tiga pada filenya, lalu pilih **Unarchive**.
-4.  **Jalankan Mesin:** Pergi ke tab **Console** dan klik tombol **START**.
-5.  **Scan QR Code:** Tunggu 1-2 menit hingga proses instalasi (*npm install*) selesai. Sebuah **QR Code raksasa** akan muncul di layar hitam (Console).
-6.  Buka aplikasi WhatsApp di HP Anda > **Perangkat Tertaut (Linked Devices)** > Scan QR Code tersebut.
-7.  **Selesai!** Ketik `.menu` di WhatsApp Anda untuk mulai menggunakan bot.
+4.  **Pindahkan File (PENTING):** Buka folder `WABot-Wibu-main` hasil ekstrak tadi, centang semua file di dalamnya, lalu pilih menu **Move** dan pindahkan ke `/` (direktori utama).
+5.  **Jalankan Mesin:** Pergi ke tab **Console** dan klik tombol **START**.
+6.  **Scan QR Code:** Tunggu 1-2 menit hingga proses instalasi (*npm install*) selesai. Sebuah **QR Code raksasa** akan muncul di layar hitam (Console).
+7.  Buka aplikasi WhatsApp di HP Anda > **Perangkat Tertaut (Linked Devices)** > Scan QR Code tersebut.
+8.  **Selesai!** Ketik `.menu` di WhatsApp Anda untuk mulai menggunakan bot.
 
 ---
 
