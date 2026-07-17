@@ -64,7 +64,7 @@ pm2 startup
 
 # 5. Memunculkan QR Code untuk di-Scan
 ```bash
-pm2 logs wibu-bot
+pm2 logs wibu-bot --lines 50
 ```
 *Setelah menjalankan perintah ke-5, akan muncul QR Code raksasa di terminal. Scan dengan WhatsApp Anda.*
 *(Tekan **CTRL + C** untuk keluar dari tampilan log jika sudah berhasil terhubung).*
