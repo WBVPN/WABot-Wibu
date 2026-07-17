@@ -1,9 +1,32 @@
 # 🤖 WIBU WA BOT - PTERODACTYL READY
-Bot WhatsApp Auto-Promosi & Broadcast berfitur canggih.
 
-## Cara Install di Pterodactyl:
-1. Download repository ini sebagai ZIP (Klik Code > Download ZIP)
-2. Upload ZIP tersebut ke tab **Files** di Pterodactyl.
-3. Klik titik tiga pada file ZIP, lalu pilih **Unarchive**.
-4. Pergi ke tab **Console** dan klik **START**.
-5. Tunggu proses instalasi selesai, lalu Scan QR Code yang muncul di layar dengan HP Anda.
+![Version](https://img.shields.io/badge/Version-1.0_Premium-blue.svg)
+![Platform](https://img.shields.io/badge/Platform-Pterodactyl_|_VPS-brightgreen.svg)
+![NodeJS](https://img.shields.io/badge/Node-v18+-orange.svg)
+
+Script WhatsApp Bot Auto-Promosi & Broadcast berfitur canggih yang dirancang khusus untuk mempermudah *marketing* produk digital Anda secara otomatis 24 jam.
+
+## 🚀 Fitur Unggulan
+
+*   **🛡️ Anti-Banned Lapis Baja:** Dilengkapi sistem *delay* acak, status "sedang mengetik", dan injeksi spintax karakter gaib (*zero-width*) agar pesan broadcast tidak terdeteksi spam oleh WhatsApp.
+*   **📢 Broadcast Berantai (`.bclist`):** Mampu mengirimkan teks promosi panjang, gambar, atau *file config* sekaligus ke puluhan grup target secara berturut-turut.
+*   **🧹 Auto-Cleanup Grup:** Sistem pintar otomatis mendeteksi dan membersihkan grup dari daftar target apabila bot di-kick oleh admin.
+*   **🔄 Auto-Backup Database:** Mengamankan semua file konfigurasi penting dengan mengirimkannya ke WhatsApp pribadi pemilik setiap 12 jam (bisa juga manual via `.backup`).
+*   **🥷 Mode Siluman (Stealth):** Setiap mendaftarkan grup target baru (`.add`), bot akan otomatis menghapus pesan perintahnya sendiri agar tidak memancing kecurigaan admin grup.
+*   **⏰ Jadwal & Auto-Loop:** Bisa mengirim promosi otomatis pada jam tertentu (misal 12:00) atau diulang secara periodik setiap sekian jam sekali.
+*   **🤖 Auto-Respon Pintar:** Menyimpan balasan kustom (gambar/teks panjang) menggunakan `.addlist`, memudahkan pelayanan pelanggan secara cepat.
+*   **👮 Satpam Grup:** Dilengkapi fitur tendang anggota (`.kick`), tutup/buka grup, dan perlindungan Anti-Spam / Anti-Forward untuk mengamankan grup bisnis Anda.
+
+---
+
+## 🛠️ Cara Install di Pterodactyl
+
+1.  **Download Script:** Klik tombol hijau `Code` di atas, lalu pilih **Download ZIP**.
+2.  **Upload ke Panel:** Buka panel Pterodactyl Anda, masuk ke tab **Files**.
+3.  **Ekstrak File:** Upload file ZIP tersebut, klik titik tiga pada filenya, lalu pilih **Unarchive**.
+4.  **Jalankan Mesin:** Pergi ke tab **Console** dan klik tombol **START**.
+5.  **Scan QR Code:** Tunggu 1-2 menit hingga proses instalasi (*npm install*) selesai. Sebuah **QR Code raksasa** akan muncul di layar hitam (Console).
+6.  Buka aplikasi WhatsApp di HP Anda > **Perangkat Tertaut (Linked Devices)** > Scan QR Code tersebut.
+7.  **Selesai!** Ketik `.menu` di WhatsApp Anda untuk mulai menggunakan bot.
+
+> *© 2026 - Dioptimalkan eksklusif untuk WibuVpnStore*
