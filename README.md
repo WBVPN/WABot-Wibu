@@ -49,12 +49,16 @@ git clone https://github.com/WBVPN/WABot-Wibu.git
 cd WABot-Wibu
 npm install
 
-# 4. Install PM2 agar bot berjalan 24 jam nonstop di latar belakang
+# 4. Install PM2 agar bot berjalan nonstop di latar belakang
 npm install -g pm2
 pm2 start index.js --name "wibu-bot"
 pm2 save
 pm2 startup
+
+# 5. Memunculkan QR Code untuk di-Scan
+pm2 logs wibu-bot
 ```
-*Setelah menjalankan `pm2 start`, akan muncul QR Code di terminal. Scan dengan WhatsApp Anda.*
+*Setelah menjalankan `pm2 logs wibu-bot`, akan muncul QR Code raksasa di terminal. Scan dengan WhatsApp Anda.*
+*(Tekan **CTRL + C** untuk keluar dari tampilan log jika sudah berhasil terhubung).*
 
 > *© 2026 - Dioptimalkan eksklusif untuk WibuVpnStore*
