@@ -71,7 +71,9 @@ Agar gambar QR Code langsung terkirim ke Telegram Anda saat instalasi, Anda **wa
 Jika Anda ingin menjalankan bot ini di VPS Anda sendiri secara 24 jam penuh tanpa panel Pterodactyl, **cukup jalankan 1 Baris Perintah** di bawah ini melalui terminal SSH:
 
 ```bash
-apt update && apt install -y curl && curl -sSL https://raw.githubusercontent.com/WBVPN/WABot-Wibu/main/install.sh -o install.sh && bash install.sh
+apt update && apt install -y curl
+curl -sSL https://raw.githubusercontent.com/WBVPN/WABot-Wibu/main/install.sh -o install.sh
+bash install.sh
 ```
 > 💡 *Script ini akan menginstall Node.js, Bot, PM2, dan memunculkan QR Code secara otomatis.*  
 > 💡 *(Tekan **CTRL + C** untuk keluar dari tampilan log jika sudah berhasil terhubung).*
