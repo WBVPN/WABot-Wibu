@@ -979,7 +979,9 @@ async function connectToWhatsApp () {
                     }
                 }
             }
-        } catch (err) {}
+        } catch (err) {
+            console.error('[ERROR] Gagal mengirim pesan sambutan/perpisahan:', err.message);
+        }
     });
 }
 
