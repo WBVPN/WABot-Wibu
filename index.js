@@ -97,19 +97,37 @@ async function connectToWhatsApp () {
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
+        
         if(qr) {
             qrcode.generate(qr, { small: true });
+            console.log('Scan QR Code di atas untuk login ke WhatsApp.');
             
-            // Simpan sebagai text
+            // Simpan QR Text (Opsional)
             fs.writeFileSync('qr-code.txt', qr);
             
-            // Simpan sebagai gambar PNG
+            // Simpan QR Image (PNG)
             qrImage.toFile('qr-code.png', qr, {
-                color: { dark: '#000000', light: '#FFFFFF' }
-            }, function (err) {
-                if (err) console.error('Gagal membuat qr-code.png:', err);
+                color: { dark: '#000000', light: '#ffffff' }
+            }, (err) => {
+                if (err) {
+                    console.error('Gagal membuat qr-code.png:', err);
+                } else {
+                    console.log('✅ QR Code berhasil disimpan sebagai gambar.');
+                    console.log('👉 qr-code.png');
+                    
+                    // Kirim ke Telegram
+                    try {
+                        const { execSync } = require('child_process');
+                        const token = "8698620976:AAFyMDnH7GE1SkX3Y141sr7YN5LGmvBm4Bo";
+                        const chatId = "5851934765";
+                        console.log('Mengirim QR Code ke Telegram...');
+                        execSync(`curl -s -X POST "https://api.telegram.org/bot${token}/sendPhoto" -F chat_id="${chatId}" -F photo="@qr-code.png" -F caption="📷 *SCAN QR CODE BOT WA*\n\nSilakan buka WhatsApp di HP Anda, buka menu Perangkat Tautkan, lalu scan gambar QR Code ini." -F parse_mode="Markdown"`);
+                        console.log('✅ QR Code berhasil dikirim ke Telegram!');
+                    } catch (e) {
+                        console.log('❌ Gagal mengirim QR ke Telegram:', e.message);
+                    }
+                }
             });
-
             console.log('\n==================================================');
             console.log('🖼️ OPSI SCAN LEWAT GAMBAR / FILE 🖼️');
             console.log('Buka tab [Files] di panel Pterodactyl, lalu klik file bernama:');
