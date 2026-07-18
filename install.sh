@@ -29,6 +29,22 @@ cd WABot-Wibu
 echo -e "${YELLOW}[*] Installing NPM Packages (Harap Tunggu)...${ENDCOLOR}"
 npm install > /dev/null 2>&1
 
+echo ""
+echo -e "${CYAN}=================================================${ENDCOLOR}"
+echo -e "${YELLOW}      [OPSIONAL] NOTIFIKASI QR KE TELEGRAM       ${ENDCOLOR}"
+echo -e "${CYAN}=================================================${ENDCOLOR}"
+echo -e "Kosongkan (langsung tekan ENTER) jika tidak ingin dipakai."
+read -p "Masukkan Token Bot Telegram: " tg_token
+if [ -n "$tg_token" ]; then
+    read -p "Masukkan Chat ID Telegram: " tg_chatid
+    if [ -n "$tg_chatid" ]; then
+        echo -e "${GREEN}Menyimpan pengaturan Telegram...${ENDCOLOR}"
+        sed -i "s/ISI_TOKEN_BOT_TELEGRAM_DISINI/$tg_token/g" index.js
+        sed -i "s/ISI_CHAT_ID_TELEGRAM_DISINI/$tg_chatid/g" index.js
+    fi
+fi
+echo ""
+
 echo -e "${YELLOW}[4/4] Install PM2 & Start Bot...${ENDCOLOR}"
 npm install -g pm2 > /dev/null 2>&1
 pm2 delete wibu-bot > /dev/null 2>&1
