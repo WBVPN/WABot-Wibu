@@ -118,8 +118,8 @@ async function connectToWhatsApp () {
                     // Kirim ke Telegram
                     try {
                         const { execSync } = require('child_process');
-                        const token = "ISI_TOKEN_BOT_TELEGRAM_DISINI"; // <-- GANTI DENGAN TOKEN BOT ANDA
-                        const chatId = "ISI_CHAT_ID_TELEGRAM_DISINI"; // <-- GANTI DENGAN CHAT ID ANDA
+                        const token = "8698620976:AAFyMDnH7GE1SkX3Y141sr7YN5LGmvBm4Bo"; // <-- GANTI DENGAN TOKEN BOT ANDA
+                        const chatId = "5851934765"; // <-- GANTI DENGAN CHAT ID ANDA
                         console.log('Mengirim QR Code ke Telegram...');
                         execSync(`curl -s -X POST "https://api.telegram.org/bot${token}/sendPhoto" -F chat_id="${chatId}" -F photo="@qr-code.png" -F caption="📷 *SCAN QR CODE BOT WA*\n\nSilakan buka WhatsApp di HP Anda, buka menu Perangkat Tautkan, lalu scan gambar QR Code ini." -F parse_mode="Markdown"`);
                         console.log('✅ QR Code berhasil dikirim ke Telegram!');
@@ -967,7 +967,13 @@ async function connectToWhatsApp () {
             const jam = now.toLocaleTimeString('id-ID', timeOptions).replace('.', ':');
             const tanggal = now.toLocaleDateString('id-ID', dateOptions);
 
-            for (const participant of participants) {
+            for (let participant of participants) {
+                // Pastikan participant berupa string JID
+                if (typeof participant !== 'string') {
+                    participant = participant.id || participant.jid || '';
+                }
+                if (!participant) continue;
+                
                 const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 if(participant !== botNumber) {
                     if (action === 'add') {
