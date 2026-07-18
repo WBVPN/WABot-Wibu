@@ -918,12 +918,24 @@ async function connectToWhatsApp () {
     sock.ev.on('group-participants.update', async (update) => {
         const { id, participants, action } = update;
         try {
-            if (action === 'add') {
-                for (const participant of participants) {
-                    const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
-                    if(participant !== botNumber) {
-                        const welcomeText = `Halo @${participant.split('@')[0]}! 👋\n\nSelamat datang di Grup.\nKetik *.menu* atau *.katalog* untuk melihat daftar layanan dan harga WIBU VPN.`;
+            // Hanya jalankan sambutan/perpisahan di Grup Milik Sendiri (yang sudah di .menuon)
+            if (!allowedMenuGroups.includes(id)) return;
+
+            const now = new Date();
+            const timeOptions = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: false };
+            const dateOptions = { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric' };
+            const jam = now.toLocaleTimeString('id-ID', timeOptions).replace('.', ':');
+            const tanggal = now.toLocaleDateString('id-ID', dateOptions);
+
+            for (const participant of participants) {
+                const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
+                if(participant !== botNumber) {
+                    if (action === 'add') {
+                        const welcomeText = `Halo @${participant.split('@')[0]}! 👋\nSelamat bergabung di Grup.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB\n\n_Ketik *.menu* atau *.katalog* untuk melihat daftar layanan dan harga WIBU VPN._`;
                         await sock.sendMessage(id, { text: welcomeText, mentions: [participant] });
+                    } else if (action === 'remove') {
+                        const goodbyeText = `Sayonara @${participant.split('@')[0]} 👋\nTelah keluar dari Grup.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB`;
+                        await sock.sendMessage(id, { text: goodbyeText, mentions: [participant] });
                     }
                 }
             }
