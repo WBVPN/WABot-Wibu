@@ -574,7 +574,7 @@ async function connectToWhatsApp () {
                 try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){}
             }
             
-            if(textLower.startsWith('.del') || textLower.startsWith('.dell')) {
+            if(textLower.startsWith('.dell') && textLower !== '.dellall' && textLower !== '.dellist') {
                 const parts = textLower.split(' ');
                 const myNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 
@@ -609,7 +609,7 @@ async function connectToWhatsApp () {
                         await sock.sendMessage(myNumber, { text: `⚠️ Nomor grup tidak valid. Cek pakai *.listgrup*` });
                     }
                 } 
-                else if (isGroup && (textLower === '.del' || textLower === '.dell')) {
+                else if (isGroup && textLower === '.dell') {
                     targetGroups = targetGroups.filter(g => g !== sender);
                     saveGroups();
                     let groupName = "Tidak Diketahui";
@@ -619,6 +619,29 @@ async function connectToWhatsApp () {
                     } catch(e){}
                     await sock.sendMessage(myNumber, { text: `🤫 🗑️ Grup *${groupName}* dihapus dari target promosi.` });
                     try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){}
+                }
+            }
+
+            if (textLower === '.del') {
+                const quotedContext = msg.message?.extendedTextMessage?.contextInfo;
+                if (quotedContext && quotedContext.stanzaId) {
+                    const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
+                    const participantJid = quotedContext.participant || sender;
+                    const isQuotedFromMe = participantJid === botJid;
+                    const key = {
+                        remoteJid: sender,
+                        fromMe: isQuotedFromMe,
+                        id: quotedContext.stanzaId,
+                        participant: quotedContext.participant || undefined
+                    };
+                    try {
+                        await sock.sendMessage(sender, { delete: key });
+                        try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){}
+                    } catch (err) {
+                        await sock.sendMessage(sender, { text: '⚠️ Gagal menghapus pesan. Pastikan bot adalah Admin grup.' });
+                    }
+                } else {
+                    await sock.sendMessage(sender, { text: '⚠️ Silakan balas (Reply) pesan yang ingin dihapus dengan ketik .del' });
                 }
             }
 
