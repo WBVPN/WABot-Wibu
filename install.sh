@@ -34,9 +34,9 @@ echo -e "${CYAN}=================================================${ENDCOLOR}"
 echo -e "${YELLOW}      [OPSIONAL] NOTIFIKASI QR KE TELEGRAM       ${ENDCOLOR}"
 echo -e "${CYAN}=================================================${ENDCOLOR}"
 echo -e "Kosongkan (langsung tekan ENTER) jika tidak ingin dipakai."
-read -p "Masukkan Token Bot Telegram: " tg_token
+read -p "Masukkan Token Bot Telegram: " tg_token </dev/tty
 if [ -n "$tg_token" ]; then
-    read -p "Masukkan Chat ID Telegram: " tg_chatid
+    read -p "Masukkan Chat ID Telegram: " tg_chatid </dev/tty
     if [ -n "$tg_chatid" ]; then
         echo -e "${GREEN}Menyimpan pengaturan Telegram...${ENDCOLOR}"
         sed -i "s/ISI_TOKEN_BOT_TELEGRAM_DISINI/$tg_token/g" index.js
