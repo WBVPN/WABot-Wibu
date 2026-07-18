@@ -256,9 +256,52 @@ async function connectToWhatsApp () {
                 menuText += "┃ ⊳ *.addlist* <nama> (Reply pesan)\n";
                 menuText += "┃ ⊳ *.dellist* <nama>\n";
                 menuText += "┃ ⊳ *.listmenu*\n┃\n";
+                
+                menuText += "┣ 📖 *BANTUAN & PANDUAN*\n";
+                menuText += "┃ ⊳ *.panduan* (Cara pakai bot)\n┃\n";
+                
                 menuText += "╰━━━━━━━━━━━━━━━━━━━";
             }
             await sock.sendMessage(sender, { text: menuText });
+        }
+        
+        if (isFromMe && textLower === '.panduan') {
+            const panduanText = `📖 *BUKU PANDUAN WIBU BOT* 📖
+
+*1. CARA BROADCAST KE GRUP*
+• Buka grup target satu per satu, ketik \`.add\` di masing-masing grup (bot otomatis keluar masuk & menghapus chat-nya).
+• Jika bos capek manual, ketik \`.addall\` di salah satu grup, bot akan otomatis menjadikan SEMUA grup yang bos ikuti saat ini sebagai target.
+• Untuk hapus grup dari target, ketik \`.dell\` di grup tersebut, atau \`.dellall\` untuk menghapus semua memori grup.
+• Ketik \`.listgrup\` untuk melihat daftar grup yang sukses ditambahkan.
+
+*2. CARA KIRIM PESAN BROADCAST*
+• Ketik \`.bc Isi pesan promosi bos disini\` (Mengirim teks biasa ke semua grup target).
+• *Rekomendasi:* Gunakan Auto-Respon agar bisa ngirim gambar/teks panjang sekaligus.
+
+*3. CARA BIKIN AUTO-RESPON (.addlist)*
+• Siapkan pesan panjang atau gambar + caption.
+• *Reply/Balas* pesan tersebut, lalu ketik \`.addlist promo1\`
+• Sekarang bos bisa tes ketik \`.promo1\`, bot akan merespon dengan gambar/teks tadi.
+• Untuk menghapus, ketik \`.dellist promo1\`.
+• Untuk melihat semua list yang tersimpan, ketik \`.listmenu\`.
+
+*4. CARA BROADCAST BERANTAI (.bclist)*
+• Pastikan bos sudah bikin list seperti langkah ke-3 (misal \`.addlist vpn\` dan \`.addlist banner\`).
+• Ketik \`.bclist vpn banner\`
+• Bot akan otomatis mengirim list 'vpn' lalu disusul list 'banner' ke puluhan grup target secara perlahan dan aman dari banned.
+
+*5. CARA BIKIN BROADCAST JADWAL/BERULANG*
+• \`.addjadwal 12:00 .bclist vpn\` (Jam 12 siang setiap hari bot otomatis ngirim list vpn ke semua grup).
+• \`.addloop 2 .bclist vpn\` (Bot otomatis ngirim list vpn ke semua grup setiap 2 jam tanpa henti).
+• \`.listjadwal\` atau \`.listloop\` untuk mengecek jadwal aktif.
+• \`.deljadwal 12:00\` atau \`.delloop 2\` untuk menghentikan.
+
+*6. KEAMANAN GRUP*
+• \`.tutup\` (Hanya admin yg bisa chat grup).
+• \`.buka\` (Semua peserta bisa chat).
+• \`.antispam on\` (Otomatis hapus link/forward dari anggota grup).
+• \`.kick\` (Sambil reply chat orangnya untuk menendang).`;
+            await sock.sendMessage(sender, { text: panduanText });
         }
 
         if (isGroup && antiForwardGroups.includes(sender) && !isFromMe) {
