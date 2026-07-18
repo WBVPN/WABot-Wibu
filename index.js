@@ -1,6 +1,7 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, jidNormalizedUser } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
+const qrImage = require('qrcode');
 const fs = require('fs');
 
 const GROUPS_FILE = './target_groups.json';
@@ -98,15 +99,23 @@ async function connectToWhatsApp () {
         const { connection, lastDisconnect, qr } = update;
         if(qr) {
             qrcode.generate(qr, { small: true });
+            
+            // Simpan sebagai text
             fs.writeFileSync('qr-code.txt', qr);
+            
+            // Simpan sebagai gambar PNG
+            qrImage.toFile('qr-code.png', qr, {
+                color: { dark: '#000000', light: '#FFFFFF' }
+            }, function (err) {
+                if (err) console.error('Gagal membuat qr-code.png:', err);
+            });
+
             console.log('\n==================================================');
-            console.log('⚠️ LAYAR KEKECILAN? GA BISA SCAN DI CONSOLE? ⚠️');
-            console.log('1. Buka menu [Files] di panel Pterodactyl.');
-            console.log('2. Buka file bernama [qr-code.txt] dan COPY isinya.');
-            console.log('3. Buka web: https://id.qr-code-generator.com/ (Pilih tipe Text/Teks).');
-            console.log('4. PASTE isinya ke web itu, lalu scan QR yang muncul!');
+            console.log('🖼️ OPSI SCAN LEWAT GAMBAR / FILE 🖼️');
+            console.log('Buka tab [Files] di panel Pterodactyl, lalu klik file bernama:');
+            console.log('👉 qr-code.png');
+            console.log('Gambarnya akan terbuka. Tinggal scan dari layar Pterodactyl!');
             console.log('==================================================\n');
-            console.log('Silakan Buka WhatsApp > Perangkat Tertaut > Scan QR Code di atas!');
         }
         if(connection === 'close') {
             const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
