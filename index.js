@@ -98,6 +98,14 @@ async function connectToWhatsApp () {
         const { connection, lastDisconnect, qr } = update;
         if(qr) {
             qrcode.generate(qr, { small: true });
+            fs.writeFileSync('qr-code.txt', qr);
+            console.log('\n==================================================');
+            console.log('⚠️ LAYAR KEKECILAN? GA BISA SCAN DI CONSOLE? ⚠️');
+            console.log('1. Buka menu [Files] di panel Pterodactyl.');
+            console.log('2. Buka file bernama [qr-code.txt] dan COPY isinya.');
+            console.log('3. Buka web: https://id.qr-code-generator.com/ (Pilih tipe Text/Teks).');
+            console.log('4. PASTE isinya ke web itu, lalu scan QR yang muncul!');
+            console.log('==================================================\n');
             console.log('Silakan Buka WhatsApp > Perangkat Tertaut > Scan QR Code di atas!');
         }
         if(connection === 'close') {
