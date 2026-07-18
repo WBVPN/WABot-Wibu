@@ -90,7 +90,7 @@ async function connectToWhatsApp () {
     const sock = makeWASocket({
         auth: state,
         logger: pino({ level: 'silent' }),
-        printQRInTerminal: true,
+        printQRInTerminal: false,
         browser: ['WibuVPNBot', 'Safari', '1.0.0']
     });
 
