@@ -23,6 +23,10 @@ function saveAntiFwd() {
 
 const CUSTOM_LIST_FILE = './custom_list.json';
 let customList = {};
+let allowedMenuGroups = [];
+if (fs.existsSync('./allowed_menu_groups.json')) {
+    allowedMenuGroups = JSON.parse(fs.readFileSync('./allowed_menu_groups.json'));
+}
 if(fs.existsSync(CUSTOM_LIST_FILE)) {
     customList = JSON.parse(fs.readFileSync(CUSTOM_LIST_FILE));
 }
@@ -215,7 +219,31 @@ async function connectToWhatsApp () {
         
         const textLower = text.toLowerCase().trim();
 
+        
+        if (isFromMe && isGroup) {
+            if (textLower === '.menuon') {
+                if (!allowedMenuGroups.includes(groupJid)) {
+                    allowedMenuGroups.push(groupJid);
+                    fs.writeFileSync('./allowed_menu_groups.json', JSON.stringify(allowedMenuGroups, null, 2));
+                    await sock.sendMessage(groupJid, { text: '✅ Fitur Menu PUBLIK diaktifkan di grup ini!\nSemua anggota sekarang bisa mengetik .menu' });
+                } else {
+                    await sock.sendMessage(groupJid, { text: '⚠️ Fitur Menu Publik sudah aktif di grup ini.' });
+                }
+                return;
+            }
+            if (textLower === '.menuoff') {
+                allowedMenuGroups = allowedMenuGroups.filter(id => id !== groupJid);
+                fs.writeFileSync('./allowed_menu_groups.json', JSON.stringify(allowedMenuGroups, null, 2));
+                await sock.sendMessage(groupJid, { text: '🚫 Fitur Menu PUBLIK dimatikan.\nAnggota grup tidak bisa lagi memanggil bot.' });
+                return;
+            }
+        }
         if(textLower === '.menu' || textLower === 'menu' || textLower === 'help' || textLower === '.help') {
+            // Logika Anti-Spam Grup
+            if (isGroup && !isFromMe) {
+                // Abaikan jika grup ini belum diizinkan oleh admin
+                if (!allowedMenuGroups.includes(groupJid)) return;
+            }
             let menuText = "╭━〔 🤖 *WIBU VPN BOT* 〕━\n┃\n";
             
             if(!isFromMe) {
@@ -248,6 +276,7 @@ async function connectToWhatsApp () {
                 menuText += "┃ ⊳ *.listjadwal* / *.listloop*\n┃\n";
                 
                 menuText += "┣ 🛡️ *SATPAM GRUP*\n";
+                menuText += "┃ ⊳ *.menuon* / *.menuoff*\n";
                 menuText += "┃ ⊳ *.antispam* on/off\n";
                 menuText += "┃ ⊳ *.kick* (Sambil Reply)\n";
                 menuText += "┃ ⊳ *.tutup* / *.buka*\n┃\n";
