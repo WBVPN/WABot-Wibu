@@ -40,4 +40,14 @@ apt update && apt install -y curl && curl -sSL https://raw.githubusercontent.com
 *(Script ini akan menginstall Node.js, Bot, PM2, dan memunculkan QR Code secara otomatis).*
 *(Tekan **CTRL + C** untuk keluar dari tampilan log jika sudah berhasil terhubung).*
 
+---
+
+## 🗑️ Cara Uninstall di VPS
+
+Jika sewaktu-waktu Anda ingin menghapus bot beserta seluruh datanya dari VPS Anda, jalankan 1 Baris Perintah ini:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/WBVPN/WABot-Wibu/main/uninstall.sh | bash
+```
+
 > *© 2026 - Dioptimalkan eksklusif untuk WibuVpnStore*
