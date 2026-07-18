@@ -735,7 +735,7 @@ async function connectToWhatsApp () {
             if(textLower === '.tutup' && isGroup) {
                 try {
                     await sock.groupSettingUpdate(sender, 'announcement');
-                    await sock.sendMessage(sender, { text: '🔒 Grup DITUTUP. Hanya Admin yang bisa mengirim pesan saat ini.' });
+                    await sock.sendMessage(sender, { text: '🔒 *Grup DITUTUP.*\nHanya Admin yang bisa mengirim pesan saat ini.\n\n> *© 2026 - Eksklusif by WibuVpnStore*' });
                 } catch(e) {
                     await sock.sendMessage(sender, { text: '⚠️ Gagal menutup grup. Pastikan Bot adalah Admin!' });
                 }
@@ -743,7 +743,7 @@ async function connectToWhatsApp () {
             if(textLower === '.buka' && isGroup) {
                 try {
                     await sock.groupSettingUpdate(sender, 'not_announcement');
-                    await sock.sendMessage(sender, { text: '🔓 Grup DIBUKA. Semua anggota sudah bisa mengirim pesan.' });
+                    await sock.sendMessage(sender, { text: '🔓 *Grup DIBUKA.*\nSemua anggota sudah bisa mengirim pesan.\n\n> *© 2026 - Eksklusif by WibuVpnStore*' });
                 } catch(e) {
                     await sock.sendMessage(sender, { text: '⚠️ Gagal membuka grup. Pastikan Bot adalah Admin!' });
                 }
