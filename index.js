@@ -494,7 +494,12 @@ async function connectToWhatsApp () {
                     } else if (quotedMessage.conversation) {
                         savedData = quotedMessage.conversation;
                     } else if (quotedMessage.extendedTextMessage) {
-                        savedData = quotedMessage.extendedTextMessage.text;
+                        // Cek apakah pesan teks ini mengandung Preview Link / Thumbnail Gambar
+                        if (quotedMessage.extendedTextMessage.matchedText || quotedMessage.extendedTextMessage.canonicalUrl || quotedMessage.extendedTextMessage.title || quotedMessage.extendedTextMessage.description || quotedMessage.extendedTextMessage.jpegThumbnail) {
+                            savedData = quotedMessage; // Simpan sebagai objek utuh untuk di-forward
+                        } else {
+                            savedData = quotedMessage.extendedTextMessage.text; // Teks biasa
+                        }
                     }
                 }
 
