@@ -16,6 +16,21 @@ Script WhatsApp Bot Auto-Promosi & Broadcast berfitur canggih yang dirancang khu
 *   **⏰ Jadwal & Auto-Loop:** Bisa mengirim promosi otomatis pada jam tertentu (misal 12:00) atau diulang secara periodik setiap sekian jam sekali.
 *   **🤖 Auto-Respon Pintar:** Menyimpan balasan kustom (gambar/teks panjang) menggunakan `.addlist`, memudahkan pelayanan pelanggan secara cepat.
 *   **👮 Satpam Grup:** Dilengkapi fitur tendang anggota (`.kick`), tutup/buka grup, dan perlindungan Anti-Spam / Anti-Forward untuk mengamankan grup bisnis Anda.
+*   **📱 Auto-Kirim QR ke Telegram:** Tidak perlu repot buka console Pterodactyl! Gambar QR Code login akan langsung meluncur ke Telegram Anda secara otomatis.
+
+---
+
+## 🔑 Konfigurasi Telegram (Wajib untuk menerima QR Code otomatis)
+Agar gambar QR Code langsung terkirim ke Telegram Anda saat instalasi, Anda **wajib** mengubah Token dan ID Telegram di dalam file `index.js` **sebelum** bot dijalankan.
+
+1. Buka file `index.js`.
+2. Cari kode di **Baris ke-120**, tampilannya seperti ini:
+   ```javascript
+   const token = "8698620976:AAFyMDnH7GE1SkX3Y141sr7YN5LGmvBm4Bo"; // <-- GANTI DENGAN TOKEN BOT ANDA
+   const chatId = "5851934765"; // <-- GANTI DENGAN CHAT ID ANDA
+   ```
+3. Ganti kedua nilai tersebut dengan Token Bot Telegram dan Chat ID Anda sendiri.
+4. Klik **Save**.
 
 ---
 
