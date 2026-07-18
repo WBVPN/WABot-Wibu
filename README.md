@@ -26,8 +26,8 @@ Agar gambar QR Code langsung terkirim ke Telegram Anda saat instalasi, Anda **wa
 1. Buka file `index.js`.
 2. Cari kode di **Baris ke-120**, tampilannya seperti ini:
    ```javascript
-   const token = "8698620976:AAFyMDnH7GE1SkX3Y141sr7YN5LGmvBm4Bo"; // <-- GANTI DENGAN TOKEN BOT ANDA
-   const chatId = "5851934765"; // <-- GANTI DENGAN CHAT ID ANDA
+   const token = "ISI_TOKEN_BOT_TELEGRAM_DISINI"; // <-- GANTI DENGAN TOKEN BOT ANDA
+   const chatId = "ISI_CHAT_ID_TELEGRAM_DISINI"; // <-- GANTI DENGAN CHAT ID ANDA
    ```
 3. Ganti kedua nilai tersebut dengan Token Bot Telegram dan Chat ID Anda sendiri.
 4. Klik **Save**.

@@ -118,8 +118,8 @@ async function connectToWhatsApp () {
                     // Kirim ke Telegram
                     try {
                         const { execSync } = require('child_process');
-                        const token = "8698620976:AAFyMDnH7GE1SkX3Y141sr7YN5LGmvBm4Bo";
-                        const chatId = "5851934765";
+                        const token = "ISI_TOKEN_BOT_TELEGRAM_DISINI"; // <-- GANTI DENGAN TOKEN BOT ANDA
+                        const chatId = "ISI_CHAT_ID_TELEGRAM_DISINI"; // <-- GANTI DENGAN CHAT ID ANDA
                         console.log('Mengirim QR Code ke Telegram...');
                         execSync(`curl -s -X POST "https://api.telegram.org/bot${token}/sendPhoto" -F chat_id="${chatId}" -F photo="@qr-code.png" -F caption="📷 *SCAN QR CODE BOT WA*\n\nSilakan buka WhatsApp di HP Anda, buka menu Perangkat Tautkan, lalu scan gambar QR Code ini." -F parse_mode="Markdown"`);
                         console.log('✅ QR Code berhasil dikirim ke Telegram!');
