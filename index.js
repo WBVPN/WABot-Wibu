@@ -350,10 +350,10 @@ async function connectToWhatsApp () {
 • Untuk menghapus, ketik \`.dellist promo1\`.
 • Untuk melihat semua list yang tersimpan, ketik \`.listmenu\`.
 
-*4. CARA BROADCAST BERANTAI (.bclist)*
+*4. CARA BROADCAST BERANTAI (.bclist & .sendlist)*
 • Pastikan bos sudah bikin list seperti langkah ke-3 (misal \`.addlist vpn\` dan \`.addlist banner\`).
-• Ketik \`.bclist vpn banner\`
-• Bot akan otomatis mengirim list 'vpn' lalu disusul list 'banner' ke puluhan grup target secara perlahan dan aman dari banned.
+• Ketik \`.bclist vpn banner\` (Bot ngirim list 'vpn' disusul 'banner' ke PULUHAN GRUP target secara perlahan).
+• Ketik \`.sendlist vpn banner\` (Bot ngirim list berantai HANYA ke dalam grup/chat tempat bos mengetik pesan ini).
 
 *5. CARA BIKIN BROADCAST JADWAL/BERULANG*
 • \`.addjadwal 12:00 .bclist vpn\` (Jam 12 siang setiap hari bot otomatis ngirim list vpn ke semua grup).
