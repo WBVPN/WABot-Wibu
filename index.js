@@ -301,6 +301,7 @@ async function connectToWhatsApp () {
                 menuText += "┃ ⊳ *.cekgrup* (Cek total grup)\n";
                 menuText += "┃ ⊳ *.bc* <teks> (Kirim pesan)\n";
                 menuText += "┃ ⊳ *.bclist* <f1> <f2> (Berantai)\n";
+                menuText += "┃ ⊳ *.sendlist* <f1> <f2> (Ke grup ini)\n";
                 menuText += "┃ ⊳ *.hidetag* / *.tagall* <teks>\n┃\n";
                 
                 menuText += "┣ ⏰ *JADWAL OTOMATIS*\n";
@@ -861,6 +862,44 @@ async function connectToWhatsApp () {
                     report += `\n\n❌ *Gagal mengirim ke ${failedGroups.length} grup karena dikunci/error:*\n` + failedGroups.join('\n');
                 }
                 await sock.sendMessage(sender, { text: report });
+            }
+
+            // ==========================================
+            // FITUR KIRIM BERANTAI KE 1 GRUP INI SAJA (.sendlist)
+            // ==========================================
+            if(textLower.startsWith('.sendlist ')) {
+                const args = textLower.substring(10).trim().split(' ');
+                let validItems = [];
+                for (const arg of args) {
+                    if (arg && customList[arg]) validItems.push(customList[arg]);
+                }
+
+                if (validItems.length === 0) {
+                    await sock.sendMessage(sender, { text: '⚠️ Nama file/config tidak ditemukan!' });
+                    return;
+                }
+
+                await sock.sendMessage(sender, { text: `🚀 Mengirim ${validItems.length} file ke grup ini...` });
+                
+                try {
+                    for (const item of validItems) {
+                        await sock.sendPresenceUpdate('composing', sender);
+                        await randomDelay(2, 5); // jeda ngetik biar natural
+                        
+                        if (item.type === 'text') {
+                            const textToSend = item.text || item.content;
+                            await sock.sendMessage(sender, { text: textToSend });
+                        } else if (item.type === 'image') {
+                            const buffer = Buffer.from(item.content, 'base64');
+                            await sock.sendMessage(sender, { image: buffer, caption: item.caption });
+                        } else if (item.type === 'document') {
+                            const buffer = Buffer.from(item.content, 'base64');
+                            await sock.sendMessage(sender, { document: buffer, fileName: item.fileName, mimetype: item.mimetype, caption: item.caption });
+                        }
+                    }
+                } catch(e) {
+                    await sock.sendMessage(sender, { text: '⚠️ Gagal mengirim beberapa file.' });
+                }
             }
 
             // ==========================================
