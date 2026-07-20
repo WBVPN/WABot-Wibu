@@ -164,6 +164,51 @@ async function connectToWhatsApp () {
 
     sock.ev.on('creds.update', saveCreds);
 
+    // FUNGSI HELPER UNTUK AUTO BROADCAST & LOOP
+    async function runAutoBroadcast(sock, bcPesan, targetGroups) {
+        let isBcList = bcPesan.startsWith('.bclist ');
+        let validItems = [];
+        
+        if (isBcList) {
+            const args = bcPesan.substring(8).trim().split(' ');
+            for (const arg of args) {
+                if (arg && customList[arg]) validItems.push(customList[arg]);
+            }
+            if (validItems.length === 0) isBcList = false; // Fallback jika list tidak ditemukan
+        }
+
+        for (let i = 0; i < targetGroups.length; i++) {
+            const groupJid = targetGroups[i];
+            try {
+                const canSend = await canSendToGroup(sock, groupJid);
+                if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
+
+                if (i > 0 && i % 10 === 0) await randomDelay(20, 40);
+                
+                await sock.sendPresenceUpdate('composing', groupJid);
+                await randomDelay(4, 8);
+                
+                if (isBcList) {
+                    for (const item of validItems) {
+                        if (typeof item === 'string') {
+                            const safeBcText = addInvisibleRandomizer(item);
+                            await sock.sendMessage(groupJid, { text: safeBcText });
+                        } else {
+                            await sock.sendMessage(groupJid, { forward: { key: { remoteJid: groupJid, id: 'RAHASIA' }, message: item } });
+                        }
+                        await randomDelay(2, 4);
+                    }
+                } else {
+                    const safeBcText = addInvisibleRandomizer(bcPesan);
+                    await sock.sendMessage(groupJid, { text: safeBcText });
+                }
+                
+                await sock.sendPresenceUpdate('paused', groupJid);
+                await randomDelay(5, 10);
+            } catch(e) {}
+        }
+    }
+
     // SISTEM AUTO-BROADCAST (TERJADWAL & LOOPING)
     setInterval(async () => {
         try {
@@ -173,59 +218,27 @@ async function connectToWhatsApp () {
             const currentTime = now.toLocaleTimeString('id-ID', options).replace('.', ':'); // "12:00"
 
             if (targetGroups.length > 0) {
-                // 1. Cek Auto-Broadcast Terjadwal (Berdasarkan Jam Tertentu)
+                // 1. Cek Auto-Broadcast Terjadwal
                 if (currentTime !== lastBroadcastTime && schedules[currentTime]) {
                     lastBroadcastTime = currentTime;
                     console.log(`⏰ Menjalankan Auto-Broadcast Jadwal untuk jam ${currentTime}`);
-                    const bcPesan = schedules[currentTime];
-                    
-                    for (let i = 0; i < targetGroups.length; i++) {
-                        const groupJid = targetGroups[i];
-                        try {
-                            const canSend = await canSendToGroup(sock, groupJid);
-                            if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
-
-                            if (i > 0 && i % 10 === 0) {
-                                await randomDelay(20, 40); 
-                            }
-                            await sock.sendPresenceUpdate('composing', groupJid);
-                            await randomDelay(4, 8);
-                            const safeBcText = addInvisibleRandomizer(bcPesan);
-                            await sock.sendMessage(groupJid, { text: safeBcText });
-                            await sock.sendPresenceUpdate('paused', groupJid);
-                            await randomDelay(5, 10);
-                        } catch(e) {}
-                    }
+                    await runAutoBroadcast(sock, schedules[currentTime], targetGroups);
                     console.log(`✅ Jadwal BC jam ${currentTime} Selesai.`);
                 }
 
-                // 2. Cek Auto-Loop (Berdasarkan Interval Per Jam)
+                // 2. Cek Auto-Loop (Berulang)
                 for (const [hoursStr, loopData] of Object.entries(loops)) {
                     const hours = parseInt(hoursStr);
                     const intervalMs = hours * 60 * 60 * 1000;
                     
-                    if (!loopData.lastRun || (nowMs - loopData.lastRun >= intervalMs)) {
+                    // Jalankan LANGSUNG saat pertama kali ditambahkan atau jika sudah waktunya
+                    if (!loopData.lastRun || (nowMs - loopData.lastRun >= intervalMs) || loopData.lastRun === -1) {
                         console.log(`🔁 Menjalankan Auto-Loop BC untuk interval ${hours} jam`);
                         
                         loopData.lastRun = nowMs;
                         saveLoops();
                         
-                        const bcPesan = loopData.message;
-                        for (let i = 0; i < targetGroups.length; i++) {
-                            const groupJid = targetGroups[i];
-                            try {
-                                const canSend = await canSendToGroup(sock, groupJid);
-                                if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
-
-                                if (i > 0 && i % 10 === 0) await randomDelay(20, 40);
-                                await sock.sendPresenceUpdate('composing', groupJid);
-                                await randomDelay(4, 8);
-                                const safeBcText = addInvisibleRandomizer(bcPesan);
-                                await sock.sendMessage(groupJid, { text: safeBcText });
-                                await sock.sendPresenceUpdate('paused', groupJid);
-                                await randomDelay(5, 10);
-                            } catch(e) {}
-                        }
+                        await runAutoBroadcast(sock, loopData.message, targetGroups);
                         console.log(`✅ Loop BC interval ${hours} jam Selesai.`);
                     }
                 }
@@ -434,10 +447,10 @@ async function connectToWhatsApp () {
                 if (savedText) {
                     loops[hoursStr] = {
                         message: savedText,
-                        lastRun: Date.now()
+                        lastRun: -1 // Set ke -1 agar loop langsung jalan seketika saat baru dibuat
                     };
                     saveLoops();
-                    await sock.sendMessage(sender, { text: `🔁 Jadwal Loop berhasil disimpan!\nBot akan otomatis menyebar pesan tersebut secara rutin **setiap ${hoursStr} jam** (dihitung mulai dari sekarang).` });
+                    await sock.sendMessage(sender, { text: `🔁 Jadwal Loop berhasil disimpan!\nBot akan *LANGSUNG* mengirimkan putaran pertama sekarang, dan selanjutnya akan diulang **setiap ${hoursStr} jam**.` });
                 } else {
                     await sock.sendMessage(sender, { text: `⚠️ Pesan kosong! Ketik '.addloop 3 Pesan promosi' ATAU Reply sebuah pesan dengan '.addloop 3'` });
                 }
