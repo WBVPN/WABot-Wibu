@@ -784,7 +784,8 @@ async function connectToWhatsApp () {
             if(textLower === '.tutup' && isGroup) {
                 try {
                     await sock.groupSettingUpdate(sender, 'announcement');
-                    await sock.sendMessage(sender, { text: '🔒 *Grup DITUTUP.*\nHanya Admin yang bisa mengirim pesan saat ini.\n\n> *© 2026 - Eksklusif by WibuVpnStore*' });
+                    const textTutup = `🔒 *GRUP SEMENTARA DITUTUP* 🔒\n────────────────────────\nMulai saat ini, *HANYA ADMIN* yang diizinkan untuk mengirim pesan ke dalam grup.\n\nHarap patuhi aturan grup! 🛡️\n> *© 2026 - WIBU VPN STORE*`;
+                    await sock.sendMessage(sender, { text: textTutup });
                 } catch(e) {
                     await sock.sendMessage(sender, { text: '⚠️ Gagal menutup grup. Pastikan Bot adalah Admin!' });
                 }
@@ -792,7 +793,8 @@ async function connectToWhatsApp () {
             if(textLower === '.buka' && isGroup) {
                 try {
                     await sock.groupSettingUpdate(sender, 'not_announcement');
-                    await sock.sendMessage(sender, { text: '🔓 *Grup DIBUKA.*\nSemua anggota sudah bisa mengirim pesan.\n\n> *© 2026 - Eksklusif by WibuVpnStore*' });
+                    const textBuka = `🔓 *GRUP RESMI DIBUKA* 🔓\n────────────────────────\nFitur obrolan telah diaktifkan kembali.\nSeluruh anggota dipersilakan untuk mengirim pesan.\n\nMari berdiskusi dengan tertib! ☕\n> *© 2026 - WIBU VPN STORE*`;
+                    await sock.sendMessage(sender, { text: textBuka });
                 } catch(e) {
                     await sock.sendMessage(sender, { text: '⚠️ Gagal membuka grup. Pastikan Bot adalah Admin!' });
                 }
