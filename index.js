@@ -1016,11 +1016,17 @@ async function connectToWhatsApp () {
                 
                 const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 if(participant !== botNumber) {
+                    let groupName = 'Grup';
+                    try {
+                        const metadata = await sock.groupMetadata(id);
+                        groupName = metadata.subject;
+                    } catch(e) {}
+
                     if (action === 'add') {
-                        const welcomeText = `Halo @${participant.split('@')[0]}! 👋\nSelamat bergabung di Grup.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB\n\n_Ketik *.menu* atau *.katalog* untuk melihat daftar layanan dan harga WIBU VPN._`;
+                        const welcomeText = `Halo @${participant.split('@')[0]}! 👋\nSelamat bergabung di *${groupName}*.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB\n\n_Ketik *.menu* atau *.katalog* untuk melihat daftar layanan dan harga._`;
                         await sock.sendMessage(id, { text: welcomeText, mentions: [participant] });
                     } else if (action === 'remove') {
-                        const goodbyeText = `Sayonara @${participant.split('@')[0]} 👋\nTelah keluar dari Grup.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB`;
+                        const goodbyeText = `Sayonara @${participant.split('@')[0]} 👋\nTelah keluar dari *${groupName}*.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB`;
                         await sock.sendMessage(id, { text: goodbyeText, mentions: [participant] });
                     }
                 }
