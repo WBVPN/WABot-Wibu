@@ -301,7 +301,7 @@ async function connectToWhatsApp () {
                 menuText += "┃ ⊳ *.cekgrup* (Cek total grup)\n";
                 menuText += "┃ ⊳ *.bc* <teks> (Kirim pesan)\n";
                 menuText += "┃ ⊳ *.bclist* <f1> <f2> (Berantai)\n";
-                menuText += "┃ ⊳ *.hidetag* <teks> (Tag All)\n┃\n";
+                menuText += "┃ ⊳ *.hidetag* / *.tagall* <teks>\n┃\n";
                 
                 menuText += "┣ ⏰ *JADWAL OTOMATIS*\n";
                 menuText += "┃ ⊳ *.addjadwal 12:00* <teks>\n";
@@ -935,8 +935,8 @@ async function connectToWhatsApp () {
             // ==========================================
             // FITUR HIDETAG (TAG ALL)
             // ==========================================
-            if (textLower.startsWith('.hidetag ') && isGroup) {
-                const messageText = text.substring(9).trim();
+            if ((textLower.startsWith('.hidetag ') || textLower.startsWith('.tagall ')) && isGroup) {
+                const messageText = textLower.startsWith('.tagall ') ? text.substring(8).trim() : text.substring(9).trim();
                 try {
                     const groupMetadata = await sock.groupMetadata(sender);
                     const participants = groupMetadata.participants.map(p => p.id);
