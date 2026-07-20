@@ -879,7 +879,8 @@ async function connectToWhatsApp () {
                     return;
                 }
 
-                await sock.sendMessage(sender, { text: `🚀 Mengirim ${validItems.length} file ke grup ini...` });
+                // Hapus pesan perintah asli dari bot owner
+                try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){}
                 
                 try {
                     for (const item of validItems) {
