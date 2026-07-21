@@ -1,13 +1,13 @@
 <div align="center">
   <img src="https://img.shields.io/badge/WIBU_VPN_STORE-BOT_WA-blue?style=for-the-badge&logo=whatsapp&color=25D366" alt="Wibu WA Bot"/>
   <br/>
-  <h1>🤖 WIBU WA BOT - PREMIUM AUTOMATION</h1>
-  <p><strong>Pterodactyl & VPS Ready | Auto-Promosi | Broadcast Berantai</strong></p>
+  <h1>🌸 WIBU WA BOT - KURUMI EDITION 🌸</h1>
+  <p><strong>Pterodactyl & VPS Ready | Auto-Promosi | Broadcast Berantai | Mode Siluman</strong></p>
   
   <p>
-    <a href="#"><img src="https://img.shields.io/badge/Version-1.0_Premium-blue.svg?style=flat-square" alt="Version"></a>
-    <a href="#"><img src="https://img.shields.io/badge/Platform-Pterodactyl_|_VPS-brightgreen.svg?style=flat-square" alt="Platform"></a>
-    <a href="#"><img src="https://img.shields.io/badge/Node-v18+-orange.svg?style=flat-square" alt="NodeJS"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Version-Kurumi_1.0-ff69b4.svg?style=flat-square&logo=react" alt="Version"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Platform-Pterodactyl_|_VPS-brightgreen.svg?style=flat-square&logo=linux" alt="Platform"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Node-v18+-orange.svg?style=flat-square&logo=node.js" alt="NodeJS"></a>
     <a href="#"><img src="https://img.shields.io/badge/Maintained-Yes-success.svg?style=flat-square" alt="Maintained"></a>
   </p>
 </div>
