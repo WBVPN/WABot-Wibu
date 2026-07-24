@@ -303,10 +303,6 @@ async function connectToWhatsApp () {
                 // Abaikan jika grup ini belum diizinkan oleh admin
                 if (!allowedMenuGroups.includes(sender)) return;
             }
-            if (!isFromMe) {
-                await sock.sendPresenceUpdate('composing', sender);
-                await randomDelay(1, 3);
-            }
             let menuText = "╭━〔 🤖 *WIBU VPN BOT* 〕━\n┃\n";
             
             if(!isFromMe) {
@@ -848,14 +844,28 @@ async function connectToWhatsApp () {
                 await sock.sendMessage(sender, { text: `🚀 Memulai Broadcast ke ${targetGroups.length} grup...` });
                 let sukses = 0;
                 let failedGroups = [];
-                const MAX_GROUPS_PER_BATCH = 15;
-                const groupsToBroadcast = targetGroups.slice(0, MAX_GROUPS_PER_BATCH);
-                if (targetGroups.length > MAX_GROUPS_PER_BATCH) {
-                    await sock.sendMessage(sender, { text: `⚠️ Broadcast dibatasi ${MAX_GROUPS_PER_BATCH} grup per sesi untuk menghindari ban WhatsApp. Jalankan ulang .bc untuk sisanya.` });
-                }
+                const BATCH_SIZE = 15;
+                const DELAY_BETWEEN_BATCHES = 5 * 60 * 1000; // 5 menit jeda antar batch
+                let totalBatches = Math.ceil(targetGroups.length / BATCH_SIZE);
+                let totalSukses = 0;
+                let totalFailed = [];
                 
-                for (let i = 0; i < groupsToBroadcast.length; i++) {
-                    const groupJid = groupsToBroadcast[i];
+                for (let batch = 0; batch < totalBatches; batch++) {
+                    const start = batch * BATCH_SIZE;
+                    const end = Math.min(start + BATCH_SIZE, targetGroups.length);
+                    const batchGroups = targetGroups.slice(start, end);
+                    
+                    if (batch > 0) {
+                        await sock.sendMessage(sender, { text: `⏳ Jeda 5 menit sebelum melanjutkan batch ${batch+1}/${totalBatches}...` });
+                        await new Promise(r => setTimeout(r, DELAY_BETWEEN_BATCHES));
+                        await sock.sendMessage(sender, { text: `🚀 Melanjutkan batch ${batch+1}/${totalBatches} (${batchGroups.length} grup)...` });
+                    }
+                    
+                    let sukses = 0;
+                    let failedGroups = [];
+                    
+                    for (let i = 0; i < batchGroups.length; i++) {
+                        const groupJid = batchGroups[i];
                     let groupName = "Tidak Diketahui";
                     try {
                         const metadata = await sock.groupMetadata(groupJid);
@@ -896,11 +906,20 @@ async function connectToWhatsApp () {
                     }
                 }
                 
-                let report = `✅ Broadcast Selesai! Berhasil terkirim ke ${sukses}/${groupsToBroadcast.length} grup.`;
+                totalSukses += sukses;
+                totalFailed = totalFailed.concat(failedGroups);
+                let report = `✅ Batch ${batch+1} Selesai! Berhasil terkirim ke ${sukses}/${batchGroups.length} grup.`;
                 if(failedGroups.length > 0) {
                     report += `\n\n❌ *Gagal mengirim ke ${failedGroups.length} grup karena dikunci/error:*\n` + failedGroups.join('\n');
                 }
                 await sock.sendMessage(sender, { text: report });
+                }
+                
+                let finalReport = `🏁 *BROADCAST TOTAL SELESAI ( ${totalBatches} Batch )* 🏁\n✅ Terkirim ke: ${totalSukses}/${targetGroups.length} grup.`;
+                if(totalFailed.length > 0) {
+                    finalReport += `\n\n❌ *Total Gagal mengirim ke ${totalFailed.length} grup:*\n` + totalFailed.join('\n');
+                }
+                await sock.sendMessage(sender, { text: finalReport });
             }
 
             // ==========================================

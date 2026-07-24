@@ -1,11 +1,11 @@
 <div align="center">
   <img src="https://img.shields.io/badge/WIBU_VPN_STORE-BOT_WA-blue?style=for-the-badge&logo=whatsapp&color=25D366" alt="Wibu WA Bot"/>
   <br/>
-  <h1>🌸 WIBU WA BOT - KURUMI EDITION v1.0.2 🌸</h1>
+  <h1>🌸 WIBU WA BOT - KURUMI EDITION v1.0.3 🌸</h1>
   <p><strong>Pterodactyl & VPS Ready | Ultimate Patch | Broadcast Berantai | Graceful Shutdown</strong></p>
   
   <p>
-    <a href="#"><img src="https://img.shields.io/badge/Version-v1.0.2_Ultimate-ff69b4.svg?style=flat-square&logo=react" alt="Version"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Version-v1.0.3_Ultimate-ff69b4.svg?style=flat-square&logo=react" alt="Version"></a>
     <a href="#"><img src="https://img.shields.io/badge/Platform-Pterodactyl_|_VPS-brightgreen.svg?style=flat-square&logo=linux" alt="Platform"></a>
     <a href="#"><img src="https://img.shields.io/badge/Node-v18+-orange.svg?style=flat-square&logo=node.js" alt="NodeJS"></a>
     <a href="#"><img src="https://img.shields.io/badge/Maintained-Yes-success.svg?style=flat-square" alt="Maintained"></a>
