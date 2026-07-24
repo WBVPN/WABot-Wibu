@@ -3,14 +3,24 @@ const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 const qrImage = require('qrcode');
 const fs = require('fs');
+const fsp = require('fs').promises;
+
+require('dotenv').config();
+function envOr(key, fallback) {
+    const val = process.env[key];
+    if (!val || val.startsWith('ISI_') && val.endsWith('_DISINI')) return fallback;
+    return val;
+}
+const BOT_TOKEN = envOr('BOT_TOKEN', '');
+const CHAT_ID = envOr('CHAT_ID', '');
 
 const GROUPS_FILE = './target_groups.json';
 let targetGroups = [];
 if(fs.existsSync(GROUPS_FILE)) {
     targetGroups = JSON.parse(fs.readFileSync(GROUPS_FILE));
 }
-function saveGroups() {
-    fs.writeFileSync(GROUPS_FILE, JSON.stringify(targetGroups, null, 2));
+async function saveGroups() {
+    await fsp.writeFile(GROUPS_FILE, JSON.stringify(targetGroups, null, 2)).catch(() => {});
 }
 
 const ANTIFWD_FILE = './anti_forward.json';
@@ -18,8 +28,8 @@ let antiForwardGroups = [];
 if(fs.existsSync(ANTIFWD_FILE)) {
     antiForwardGroups = JSON.parse(fs.readFileSync(ANTIFWD_FILE));
 }
-function saveAntiFwd() {
-    fs.writeFileSync(ANTIFWD_FILE, JSON.stringify(antiForwardGroups, null, 2));
+async function saveAntiFwd() {
+    await fsp.writeFile(ANTIFWD_FILE, JSON.stringify(antiForwardGroups, null, 2)).catch(() => {});
 }
 
 const CUSTOM_LIST_FILE = './custom_list.json';
@@ -31,8 +41,8 @@ if (fs.existsSync('./allowed_menu_groups.json')) {
 if(fs.existsSync(CUSTOM_LIST_FILE)) {
     customList = JSON.parse(fs.readFileSync(CUSTOM_LIST_FILE));
 }
-function saveCustomList() {
-    fs.writeFileSync(CUSTOM_LIST_FILE, JSON.stringify(customList, null, 2));
+async function saveCustomList() {
+    await fsp.writeFile(CUSTOM_LIST_FILE, JSON.stringify(customList, null, 2)).catch(() => {});
 }
 
 const SCHEDULE_FILE = './schedule.json';
@@ -40,8 +50,8 @@ let schedules = {};
 if(fs.existsSync(SCHEDULE_FILE)) {
     schedules = JSON.parse(fs.readFileSync(SCHEDULE_FILE));
 }
-function saveSchedules() {
-    fs.writeFileSync(SCHEDULE_FILE, JSON.stringify(schedules, null, 2));
+async function saveSchedules() {
+    await fsp.writeFile(SCHEDULE_FILE, JSON.stringify(schedules, null, 2)).catch(() => {});
 }
 
 const LOOPS_FILE = './loops.json';
@@ -49,8 +59,8 @@ let loops = {};
 if(fs.existsSync(LOOPS_FILE)) {
     loops = JSON.parse(fs.readFileSync(LOOPS_FILE));
 }
-function saveLoops() {
-    fs.writeFileSync(LOOPS_FILE, JSON.stringify(loops, null, 2));
+async function saveLoops() {
+    await fsp.writeFile(LOOPS_FILE, JSON.stringify(loops, null, 2)).catch(() => {});
 }
 
 // Helper: Delay acak untuk simulasi ketikan manusia
@@ -92,6 +102,7 @@ async function connectToWhatsApp () {
         auth: state,
         logger: pino({ level: 'silent' }),
         printQRInTerminal: false,
+        markOnlineOnConnect: false,
         browser: ['WibuVPNBot', 'Safari', '1.0.0']
     });
 
@@ -118,8 +129,8 @@ async function connectToWhatsApp () {
                     // Kirim ke Telegram
                     try {
                         const { execSync } = require('child_process');
-                        const token = "8698620976:AAFyMDnH7GE1SkX3Y141sr7YN5LGmvBm4Bo"; // <-- GANTI DENGAN TOKEN BOT ANDA
-                        const chatId = "5851934765"; // <-- GANTI DENGAN CHAT ID ANDA
+                        const token = BOT_TOKEN; // <-- GANTI DENGAN TOKEN BOT ANDA
+                        const chatId = CHAT_ID; // <-- GANTI DENGAN CHAT ID ANDA
                         console.log('Mengirim QR Code ke Telegram...');
                         execSync(`curl -s -X POST "https://api.telegram.org/bot${token}/sendPhoto" -F chat_id="${chatId}" -F photo="@qr-code.png" -F caption="📷 *SCAN QR CODE BOT WA*\n\nSilakan buka WhatsApp di HP Anda, buka menu Perangkat Tautkan, lalu scan gambar QR Code ini." -F parse_mode="Markdown"`);
                         console.log('✅ QR Code berhasil dikirim ke Telegram!');
@@ -236,7 +247,7 @@ async function connectToWhatsApp () {
                         console.log(`🔁 Menjalankan Auto-Loop BC untuk interval ${hours} jam`);
                         
                         loopData.lastRun = nowMs;
-                        saveLoops();
+                        await saveLoops();
                         
                         await runAutoBroadcast(sock, loopData.message, targetGroups);
                         console.log(`✅ Loop BC interval ${hours} jam Selesai.`);
@@ -272,7 +283,7 @@ async function connectToWhatsApp () {
             if (textLower === '.menuon') {
                 if (!allowedMenuGroups.includes(sender)) {
                     allowedMenuGroups.push(sender);
-                    fs.writeFileSync('./allowed_menu_groups.json', JSON.stringify(allowedMenuGroups, null, 2));
+                    await fsp.writeFile('./allowed_menu_groups.json', JSON.stringify(allowedMenuGroups, null, 2));
                     await sock.sendMessage(sender, { text: '✅ Fitur Menu PUBLIK diaktifkan di grup ini!\nSemua anggota sekarang bisa mengetik .menu' });
                 } else {
                     await sock.sendMessage(sender, { text: '⚠️ Fitur Menu Publik sudah aktif di grup ini.' });
@@ -281,7 +292,7 @@ async function connectToWhatsApp () {
             }
             if (textLower === '.menuoff') {
                 allowedMenuGroups = allowedMenuGroups.filter(id => id !== sender);
-                fs.writeFileSync('./allowed_menu_groups.json', JSON.stringify(allowedMenuGroups, null, 2));
+                await fsp.writeFile('./allowed_menu_groups.json', JSON.stringify(allowedMenuGroups, null, 2));
                 await sock.sendMessage(sender, { text: '🚫 Fitur Menu PUBLIK dimatikan.\nAnggota grup tidak bisa lagi memanggil bot.' });
                 return;
             }
@@ -291,6 +302,10 @@ async function connectToWhatsApp () {
             if (isGroup && !isFromMe) {
                 // Abaikan jika grup ini belum diizinkan oleh admin
                 if (!allowedMenuGroups.includes(sender)) return;
+            }
+            if (!isFromMe) {
+                await sock.sendPresenceUpdate('composing', sender);
+                await randomDelay(1, 3);
             }
             let menuText = "╭━〔 🤖 *WIBU VPN BOT* 〕━\n┃\n";
             
@@ -405,13 +420,17 @@ async function connectToWhatsApp () {
             const keyword = textLower.substring(1).trim();
             if(customList[keyword]) {
                 if (isGroup && !isFromMe && !allowedMenuGroups.includes(sender)) return;
-                await sock.readMessages([msg.key]);
+                if(!isFromMe) await randomDelay(3, 5);
                 await sock.sendPresenceUpdate('composing', sender);
                 if(!isFromMe) await randomDelay(1, 3);
                 
                 const savedData = customList[keyword];
                 if (typeof savedData === 'string') {
                     await sock.sendMessage(sender, { text: savedData });
+                } else if (savedData.type === 'text') {
+                    await sock.sendMessage(sender, { text: savedData.data });
+                } else if (savedData.type === 'media') {
+                    await sock.sendMessage(sender, { forward: { key: { remoteJid: sender, id: 'RAHASIA' }, message: savedData.data } });
                 } else {
                     await sock.sendMessage(sender, { forward: { key: { remoteJid: sender, id: 'RAHASIA' }, message: savedData } });
                 }
@@ -539,15 +558,15 @@ async function connectToWhatsApp () {
                 let savedData = null;
                 if (quotedMessage) {
                     if (quotedMessage.imageMessage || quotedMessage.videoMessage || quotedMessage.documentMessage || quotedMessage.audioMessage) {
-                        savedData = quotedMessage;
+                        savedData = { type: 'media', data: quotedMessage };
                     } else if (quotedMessage.conversation) {
-                        savedData = quotedMessage.conversation;
+                        savedData = { type: 'text', data: quotedMessage.conversation };
                     } else if (quotedMessage.extendedTextMessage) {
                         // Cek apakah pesan teks ini mengandung Preview Link / Thumbnail Gambar
                         if (quotedMessage.extendedTextMessage.matchedText || quotedMessage.extendedTextMessage.canonicalUrl || quotedMessage.extendedTextMessage.title || quotedMessage.extendedTextMessage.description || quotedMessage.extendedTextMessage.jpegThumbnail) {
-                            savedData = quotedMessage; // Simpan sebagai objek utuh untuk di-forward
+                            savedData = { type: 'media', data: quotedMessage };
                         } else {
-                            savedData = quotedMessage.extendedTextMessage.text; // Teks biasa
+                            savedData = { type: 'text', data: quotedMessage.extendedTextMessage.text };
                         }
                     }
                 }
@@ -596,7 +615,7 @@ async function connectToWhatsApp () {
                             count++;
                         }
                     }
-                    saveGroups();
+                    await saveGroups();
                     await sock.sendMessage(myNumber, { text: `✅ Berhasil menambahkan *${count} grup baru* secara massal ke daftar target Broadcast!` });
                 } catch(e) {
                     await sock.sendMessage(myNumber, { text: '⚠️ Gagal mengambil daftar grup.' });
@@ -607,7 +626,7 @@ async function connectToWhatsApp () {
                 const myNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 const total = targetGroups.length;
                 targetGroups = [];
-                saveGroups();
+                await saveGroups();
                 await sock.sendMessage(myNumber, { text: `🗑️ Berhasil menghapus semua (*${total} grup*) dari daftar target Broadcast.` });
             }
 
@@ -615,7 +634,7 @@ async function connectToWhatsApp () {
                 const myNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 if(!targetGroups.includes(sender)) {
                     targetGroups.push(sender);
-                    saveGroups();
+                    await saveGroups();
                     let groupName = "Tidak Diketahui";
                     try {
                         const metadata = await sock.groupMetadata(sender);
@@ -655,7 +674,7 @@ async function connectToWhatsApp () {
                             deletedNames.push(`- *${groupName}* (No.${num})`);
                             targetGroups.splice(num - 1, 1);
                         }
-                        saveGroups();
+                        await saveGroups();
                         
                         let replyMsg = `🗑️ ✅ Berhasil mencoret ${nums.length} grup dari target Broadcast:\n` + deletedNames.reverse().join('\n');
                         await sock.sendMessage(myNumber, { text: replyMsg });
@@ -665,7 +684,7 @@ async function connectToWhatsApp () {
                 } 
                 else if (isGroup && textLower === '.dell') {
                     targetGroups = targetGroups.filter(g => g !== sender);
-                    saveGroups();
+                    await saveGroups();
                     let groupName = "Tidak Diketahui";
                     try {
                         const metadata = await sock.groupMetadata(sender);
@@ -721,7 +740,7 @@ async function connectToWhatsApp () {
                     
                     if (removedCount > 0) {
                         targetGroups = validGroups;
-                        saveGroups();
+                        await saveGroups();
                         txt += `\n🧹 *Pembersihan Otomatis:* ${removedCount} grup dihapus dari database karena bot telah dikeluarkan.\n✅ *Total target sekarang: ${targetGroups.length} grup.*`;
                     } else {
                         txt += `\n✅ *Total target: ${targetGroups.length} grup.*`;
@@ -829,9 +848,14 @@ async function connectToWhatsApp () {
                 await sock.sendMessage(sender, { text: `🚀 Memulai Broadcast ke ${targetGroups.length} grup...` });
                 let sukses = 0;
                 let failedGroups = [];
+                const MAX_GROUPS_PER_BATCH = 15;
+                const groupsToBroadcast = targetGroups.slice(0, MAX_GROUPS_PER_BATCH);
+                if (targetGroups.length > MAX_GROUPS_PER_BATCH) {
+                    await sock.sendMessage(sender, { text: `⚠️ Broadcast dibatasi ${MAX_GROUPS_PER_BATCH} grup per sesi untuk menghindari ban WhatsApp. Jalankan ulang .bc untuk sisanya.` });
+                }
                 
-                for (let i = 0; i < targetGroups.length; i++) {
-                    const groupJid = targetGroups[i];
+                for (let i = 0; i < groupsToBroadcast.length; i++) {
+                    const groupJid = groupsToBroadcast[i];
                     let groupName = "Tidak Diketahui";
                     try {
                         const metadata = await sock.groupMetadata(groupJid);
@@ -846,11 +870,11 @@ async function connectToWhatsApp () {
                         }
 
                         if (i > 0 && i % 10 === 0) {
-                            await randomDelay(15, 30);
+                            await randomDelay(20, 45);
                         }
 
                         await sock.sendPresenceUpdate('composing', groupJid);
-                        await randomDelay(3, 7);
+                        await randomDelay(7, 15);
 
                         if (quotedMessage) {
                             const messageToForward = {
@@ -872,7 +896,7 @@ async function connectToWhatsApp () {
                     }
                 }
                 
-                let report = `✅ Broadcast Selesai! Berhasil terkirim ke ${sukses}/${targetGroups.length} grup.`;
+                let report = `✅ Broadcast Selesai! Berhasil terkirim ke ${sukses}/${groupsToBroadcast.length} grup.`;
                 if(failedGroups.length > 0) {
                     report += `\n\n❌ *Gagal mengirim ke ${failedGroups.length} grup karena dikunci/error:*\n` + failedGroups.join('\n');
                 }
@@ -903,14 +927,13 @@ async function connectToWhatsApp () {
                         await randomDelay(2, 5); // jeda ngetik biar natural
                         
                         if (item.type === 'text') {
-                            const textToSend = item.text || item.content;
-                            await sock.sendMessage(sender, { text: textToSend });
-                        } else if (item.type === 'image') {
-                            const buffer = Buffer.from(item.content, 'base64');
-                            await sock.sendMessage(sender, { image: buffer, caption: item.caption });
-                        } else if (item.type === 'document') {
-                            const buffer = Buffer.from(item.content, 'base64');
-                            await sock.sendMessage(sender, { document: buffer, fileName: item.fileName, mimetype: item.mimetype, caption: item.caption });
+                            await sock.sendMessage(sender, { text: item.data });
+                        } else if (item.type === 'media') {
+                            await sock.sendMessage(sender, { forward: { key: { remoteJid: sender, id: 'RAHASIA' }, message: item.data } });
+                        } else if (typeof item === 'string') {
+                            await sock.sendMessage(sender, { text: item });
+                        } else {
+                            await sock.sendMessage(sender, { forward: { key: { remoteJid: sender, id: 'RAHASIA' }, message: item } });
                         }
                     }
                 } catch(e) {
@@ -941,9 +964,14 @@ async function connectToWhatsApp () {
                 await sock.sendMessage(sender, { text: `🚀 Memulai pengiriman massal (${validItems.length} file) ke ${targetGroups.length} grup...` });
                 let sukses = 0;
                 let failedGroups = [];
+                const MAX_GROUPS_PER_BATCH = 15;
+                const groupsToBroadcast = targetGroups.slice(0, MAX_GROUPS_PER_BATCH);
+                if (targetGroups.length > MAX_GROUPS_PER_BATCH) {
+                    await sock.sendMessage(sender, { text: `⚠️ Multi-file broadcast dibatasi ${MAX_GROUPS_PER_BATCH} grup per sesi.` });
+                }
 
-                for (let i = 0; i < targetGroups.length; i++) {
-                    const groupJid = targetGroups[i];
+                for (let i = 0; i < groupsToBroadcast.length; i++) {
+                    const groupJid = groupsToBroadcast[i];
                     let groupName = "Tidak Diketahui";
                     try {
                         const metadata = await sock.groupMetadata(groupJid);
@@ -957,13 +985,18 @@ async function connectToWhatsApp () {
                             continue;
                         }
 
-                        if (i > 0 && i % 10 === 0) await randomDelay(15, 30);
+                        if (i > 0 && i % 10 === 0) await randomDelay(20, 45);
 
                         await sock.sendPresenceUpdate('composing', groupJid);
-                        await randomDelay(3, 7);
+                        await randomDelay(7, 15);
 
                         for (const item of validItems) {
-                            if (typeof item === 'string') {
+                            if (item.type === 'text') {
+                                const safeBcText = addInvisibleRandomizer(item.data);
+                                await sock.sendMessage(groupJid, { text: safeBcText });
+                            } else if (item.type === 'media') {
+                                await sock.sendMessage(groupJid, { forward: { key: { remoteJid: sender, id: 'RAHASIA' }, message: item.data } });
+                            } else if (typeof item === 'string') {
                                 const safeBcText = addInvisibleRandomizer(item);
                                 await sock.sendMessage(groupJid, { text: safeBcText });
                             } else {
@@ -980,7 +1013,7 @@ async function connectToWhatsApp () {
                     }
                 }
                 
-                let report = `✅ Broadcast Berantai Selesai! Terkirim ke ${sukses}/${targetGroups.length} grup.`;
+                let report = `✅ Broadcast Berantai Selesai! Terkirim ke ${sukses}/${groupsToBroadcast.length} grup.`;
                 if(failedGroups.length > 0) {
                     report += `\n\n❌ *Gagal mengirim ke ${failedGroups.length} grup karena dikunci/error:*\n` + failedGroups.join('\n');
                 }
@@ -1038,7 +1071,7 @@ async function connectToWhatsApp () {
                     } catch(e) {}
 
                     if (action === 'add') {
-                        const welcomeText = `Halo @${participant.split('@')[0]}! 👋\nSelamat bergabung di *${groupName}*.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB\n\n_Ketik *.menu* atau *.katalog* untuk melihat daftar layanan dan harga._`;
+                        const welcomeText = `Halo @${participant.split('@')[0]}! 👋\nSelamat bergabung di *${groupName}*.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB\n\n_Ketik *.menu* untuk melihat daftar layanan dan harga._`;
                         await sock.sendMessage(id, { text: welcomeText, mentions: [participant] });
                     } else if (action === 'remove') {
                         const goodbyeText = `Sayonara @${participant.split('@')[0]} 👋\nTelah keluar dari *${groupName}*.\n\n📅 *Tanggal:* ${tanggal}\n⏰ *Jam:* ${jam} WIB`;
@@ -1053,3 +1086,23 @@ async function connectToWhatsApp () {
 }
 
 connectToWhatsApp();
+
+// Graceful shutdown — save all config before exit
+process.on('SIGINT', async () => {
+    console.log('\n[SHUTDOWN] Saving configs...');
+    await await saveGroups();
+    await saveAntiFwd();
+    await saveCustomList();
+    await saveSchedules();
+    await saveLoops();
+    console.log('[SHUTDOWN] Done. Bye!');
+    process.exit(0);
+});
+process.on('SIGTERM', async () => {
+    await await saveGroups();
+    await saveAntiFwd();
+    await saveCustomList();
+    await saveSchedules();
+    await saveLoops();
+    process.exit(0);
+});

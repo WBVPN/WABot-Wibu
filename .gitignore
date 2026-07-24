@@ -2,3 +2,10 @@ node_modules/
 auth_info_baileys/
 qr-code.png
 qr-code.txt
+.env
+custom_list.json
+target_groups.json
+allowed_menu_groups.json
+anti_forward.json
+schedule.json
+loops.json
