@@ -1,11 +1,11 @@
 <div align="center">
   <img src="https://img.shields.io/badge/WIBU_VPN_STORE-BOT_WA-blue?style=for-the-badge&logo=whatsapp&color=25D366" alt="Wibu WA Bot"/>
   <br/>
-  <h1>🌸 WIBU WA BOT - KURUMI EDITION 🌸</h1>
-  <p><strong>Pterodactyl & VPS Ready | Auto-Promosi | Broadcast Berantai | Mode Siluman</strong></p>
+  <h1>🌸 WIBU WA BOT - KURUMI EDITION v1.0.2 🌸</h1>
+  <p><strong>Pterodactyl & VPS Ready | Ultimate Patch | Broadcast Berantai | Graceful Shutdown</strong></p>
   
   <p>
-    <a href="#"><img src="https://img.shields.io/badge/Version-Kurumi_1.0-ff69b4.svg?style=flat-square&logo=react" alt="Version"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Version-v1.0.2_Ultimate-ff69b4.svg?style=flat-square&logo=react" alt="Version"></a>
     <a href="#"><img src="https://img.shields.io/badge/Platform-Pterodactyl_|_VPS-brightgreen.svg?style=flat-square&logo=linux" alt="Platform"></a>
     <a href="#"><img src="https://img.shields.io/badge/Node-v18+-orange.svg?style=flat-square&logo=node.js" alt="NodeJS"></a>
     <a href="#"><img src="https://img.shields.io/badge/Maintained-Yes-success.svg?style=flat-square" alt="Maintained"></a>
@@ -36,18 +36,17 @@
 
 ---
 
-## 🔑 Konfigurasi Auto-QR ke Telegram (Wajib)
+## 🔑 Konfigurasi Auto-QR ke Telegram (Sangat Disarankan)
 
-Agar gambar QR Code langsung terkirim ke Telegram Anda saat instalasi, Anda **wajib** mengubah Token dan ID Telegram di dalam file `index.js` **sebelum** bot dijalankan.
+Agar gambar QR Code langsung terkirim ke Telegram Anda saat instalasi, Anda bisa menggunakan file `.env`. 
 
-1. Buka file `index.js`.
-2. Cari kode di **Baris ke-120** (bagian `// Kirim ke Telegram`), tampilannya seperti ini:
-   ```javascript
-   const token = "ISI_TOKEN_BOT_TELEGRAM_DISINI"; // <-- GANTI DENGAN TOKEN BOT ANDA
-   const chatId = "ISI_CHAT_ID_TELEGRAM_DISINI"; // <-- GANTI DENGAN CHAT ID ANDA
-   ```
-3. Ganti kedua nilai tersebut dengan Token Bot Telegram dan Chat ID Anda sendiri.
-4. Klik **Save**.
+Jika Anda menginstal menggunakan VPS via `install.sh`, script akan otomatis meminta Token dan Chat ID Anda lalu menyimpannya.
+Namun, jika Anda install manual di Pterodactyl, buatlah file `.env` di direktori utama bot dan isi dengan:
+```env
+BOT_TOKEN=8698620976:AAFyMD...
+CHAT_ID=5851934765
+```
+Simpan file `.env` tersebut. Bot akan aman membaca token tanpa harus *hardcode* di dalam `index.js`.
 
 ---
 
