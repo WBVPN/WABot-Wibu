@@ -188,35 +188,54 @@ async function connectToWhatsApp () {
             if (validItems.length === 0) isBcList = false; // Fallback jika list tidak ditemukan
         }
 
-        for (let i = 0; i < targetGroups.length; i++) {
-            const groupJid = targetGroups[i];
-            try {
-                const canSend = await canSendToGroup(sock, groupJid);
-                if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
+        const BATCH_SIZE = 15;
+        const DELAY_BETWEEN_BATCHES = 5 * 60 * 1000; // 5 menit jeda antar batch
+        let totalBatches = Math.ceil(targetGroups.length / BATCH_SIZE);
+        
+        for (let batch = 0; batch < totalBatches; batch++) {
+            const start = batch * BATCH_SIZE;
+            const end = Math.min(start + BATCH_SIZE, targetGroups.length);
+            const batchGroups = targetGroups.slice(start, end);
+            
+            if (batch > 0) {
+                console.log(`⏳ Auto-Broadcast: Jeda 5 menit sebelum melanjutkan batch ${batch+1}/${totalBatches}...`);
+                await new Promise(r => setTimeout(r, DELAY_BETWEEN_BATCHES));
+                console.log(`🚀 Auto-Broadcast: Melanjutkan batch ${batch+1}/${totalBatches}...`);
+            }
+            
+            for (let i = 0; i < batchGroups.length; i++) {
+                const groupJid = batchGroups[i];
+                try {
+                    const canSend = await canSendToGroup(sock, groupJid);
+                    if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
 
-                if (i > 0 && i % 10 === 0) await randomDelay(20, 40);
-                
-                await sock.sendPresenceUpdate('composing', groupJid);
-                await randomDelay(4, 8);
-                
-                if (isBcList) {
-                    for (const item of validItems) {
-                        if (typeof item === 'string') {
-                            const safeBcText = addInvisibleRandomizer(item);
-                            await sock.sendMessage(groupJid, { text: safeBcText });
-                        } else {
-                            await sock.sendMessage(groupJid, { forward: { key: { remoteJid: groupJid, id: 'RAHASIA' }, message: item } });
+                    await sock.sendPresenceUpdate('composing', groupJid);
+                    await randomDelay(4, 8);
+                    
+                    if (isBcList) {
+                        for (const item of validItems) {
+                            if (item.type === 'text') {
+                                const safeBcText = addInvisibleRandomizer(item.data);
+                                await sock.sendMessage(groupJid, { text: safeBcText });
+                            } else if (item.type === 'media') {
+                                await sock.sendMessage(groupJid, { forward: { key: { remoteJid: groupJid, id: 'RAHASIA' }, message: item.data } });
+                            } else if (typeof item === 'string') {
+                                const safeBcText = addInvisibleRandomizer(item);
+                                await sock.sendMessage(groupJid, { text: safeBcText });
+                            } else {
+                                await sock.sendMessage(groupJid, { forward: { key: { remoteJid: groupJid, id: 'RAHASIA' }, message: item } });
+                            }
+                            await randomDelay(2, 4);
                         }
-                        await randomDelay(2, 4);
+                    } else {
+                        const safeBcText = addInvisibleRandomizer(bcPesan);
+                        await sock.sendMessage(groupJid, { text: safeBcText });
                     }
-                } else {
-                    const safeBcText = addInvisibleRandomizer(bcPesan);
-                    await sock.sendMessage(groupJid, { text: safeBcText });
-                }
-                
-                await sock.sendPresenceUpdate('paused', groupJid);
-                await randomDelay(5, 10);
-            } catch(e) {}
+                    
+                    await sock.sendPresenceUpdate('paused', groupJid);
+                    await randomDelay(5, 10);
+                } catch(e) {}
+            }
         }
     }
 
