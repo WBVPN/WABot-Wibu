@@ -286,11 +286,12 @@ async function connectToWhatsApp () {
                         console.log(`✅ Loop BC interval ${hours} jam Selesai.`);
                         if (report && sock.user) {
                             const myNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
+                            const targetChat = loopData.chatId || myNumber;
                             let finalMsg = `🏁 *AUTO-LOOP BC SELESAI (Per ${hours} Jam)* 🏁\n✅ Terkirim ke: ${report.success}/${report.total} grup.`;
                             if (report.failedGroups.length > 0) {
                                 finalMsg += `\n\n❌ *Gagal mengirim ke ${report.failedGroups.length} grup:*\n` + report.failedGroups.join('\n');
                             }
-                            try { await sock.sendMessage(myNumber, { text: finalMsg }); } catch(e){}
+                            try { await sock.sendMessage(targetChat, { text: finalMsg }); } catch(e){}
                         }
                     }
                 }
@@ -530,7 +531,8 @@ async function connectToWhatsApp () {
                 if (savedText) {
                     loops[hoursStr] = {
                         message: savedText,
-                        lastRun: -1 // Set ke -1 agar loop langsung jalan seketika saat baru dibuat
+                        lastRun: -1, // Set ke -1 agar loop langsung jalan seketika saat baru dibuat
+                        chatId: sender
                     };
                     saveLoops();
                     await sock.sendMessage(sender, { text: `🔁 Jadwal Loop berhasil disimpan!\nBot akan *LANGSUNG* mengirimkan putaran pertama sekarang, dan selanjutnya akan diulang **setiap ${hoursStr} jam**.` });
