@@ -673,10 +673,23 @@ async function connectToWhatsApp () {
             if(textLower === '.listmenu') {
                 const keys = Object.keys(customList);
                 if (keys.length === 0) {
-                    await sock.sendMessage(sender, { text: `📊 Belum ada menu custom yang dibuat.` });
+                    await sock.sendMessage(sender, { text: `📊 Belum ada file/teks yang disimpan.` });
                 } else {
-                    let txt = `📊 *Daftar Menu Auto-Respon:*\n\n`;
-                    keys.forEach(k => txt += `• .${k}\n`);
+                    let txt = `📊 *Daftar File & Teks Tersimpan (Untuk .bclist):*\n\n`;
+                    keys.forEach(k => {
+                        const item = customList[k];
+                        let snippet = "";
+                        if (item.type === 'media' || item.type === 'image' || item.type === 'video' || item.type === 'document') {
+                            snippet = `[GAMBAR / FILE CONFIG / VIDEO]`;
+                        } else if (item.type === 'text') {
+                            snippet = item.data.length > 30 ? `"${item.data.substring(0, 30).replace(/\n/g, ' ')}..."` : `"${item.data.replace(/\n/g, ' ')}"`;
+                        } else if (typeof item === 'string') {
+                            snippet = item.length > 30 ? `"${item.substring(0, 30).replace(/\n/g, ' ')}..."` : `"${item.replace(/\n/g, ' ')}"`;
+                        } else {
+                            snippet = `[FILE MEDIA]`;
+                        }
+                        txt += `• *${k}* 👉 _${snippet}_\n`;
+                    });
                     await sock.sendMessage(sender, { text: txt });
                 }
             }
