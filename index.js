@@ -214,7 +214,10 @@ async function connectToWhatsApp () {
                 } catch(e) {}
                 try {
                     const canSend = await canSendToGroup(sock, groupJid);
-                    if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
+                    if (!canSend) {
+                        totalFailed.push(`- *${groupName || groupJid}* (Grup Ditutup/Hanya Admin)`);
+                        continue;
+                    }
 
                     await sock.sendPresenceUpdate('composing', groupJid);
                     await randomDelay(4, 8);
