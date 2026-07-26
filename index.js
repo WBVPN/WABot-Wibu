@@ -191,6 +191,8 @@ async function connectToWhatsApp () {
         const BATCH_SIZE = 15;
         const DELAY_BETWEEN_BATCHES = 5 * 60 * 1000; // 5 menit jeda antar batch
         let totalBatches = Math.ceil(targetGroups.length / BATCH_SIZE);
+        let totalSukses = 0;
+        let totalFailed = [];
         
         for (let batch = 0; batch < totalBatches; batch++) {
             const start = batch * BATCH_SIZE;
@@ -205,6 +207,11 @@ async function connectToWhatsApp () {
             
             for (let i = 0; i < batchGroups.length; i++) {
                 const groupJid = batchGroups[i];
+                let groupName = "Tidak Diketahui";
+                try {
+                    const metadata = await sock.groupMetadata(groupJid);
+                    groupName = metadata.subject;
+                } catch(e) {}
                 try {
                     const canSend = await canSendToGroup(sock, groupJid);
                     if (!canSend) continue; // Skip jika grup ditutup & bot bukan admin
@@ -233,10 +240,14 @@ async function connectToWhatsApp () {
                     }
                     
                     await sock.sendPresenceUpdate('paused', groupJid);
+                    totalSukses++;
                     await randomDelay(5, 10);
-                } catch(e) {}
+                } catch(e) {
+                    totalFailed.push(`- *${groupName || groupJid}* (Error/Dikunci)`);
+                }
             }
         }
+        return { success: totalSukses, total: targetGroups.length, failedGroups: totalFailed };
     }
 
     // SISTEM AUTO-BROADCAST (TERJADWAL & LOOPING)
@@ -268,8 +279,16 @@ async function connectToWhatsApp () {
                         loopData.lastRun = nowMs;
                         await saveLoops();
                         
-                        await runAutoBroadcast(sock, loopData.message, targetGroups);
+                        const report = await runAutoBroadcast(sock, loopData.message, targetGroups);
                         console.log(`✅ Loop BC interval ${hours} jam Selesai.`);
+                        if (report && sock.user) {
+                            const myNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
+                            let finalMsg = `🏁 *AUTO-LOOP BC SELESAI (Per ${hours} Jam)* 🏁\n✅ Terkirim ke: ${report.success}/${report.total} grup.`;
+                            if (report.failedGroups.length > 0) {
+                                finalMsg += `\n\n❌ *Gagal mengirim ke ${report.failedGroups.length} grup:*\n` + report.failedGroups.join('\n');
+                            }
+                            try { await sock.sendMessage(myNumber, { text: finalMsg }); } catch(e){}
+                        }
                     }
                 }
             }
