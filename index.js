@@ -63,6 +63,15 @@ async function saveLoops() {
     await fsp.writeFile(LOOPS_FILE, JSON.stringify(loops, null, 2)).catch(() => {});
 }
 
+const MUTED_FILE = './muted_users.json';
+let mutedUsers = [];
+if(fs.existsSync(MUTED_FILE)) {
+    mutedUsers = JSON.parse(fs.readFileSync(MUTED_FILE));
+}
+async function saveMuted() {
+    await fsp.writeFile(MUTED_FILE, JSON.stringify(mutedUsers, null, 2)).catch(() => {});
+}
+
 // Helper: Delay acak untuk simulasi ketikan manusia
 const randomDelay = (min, max) => new Promise(res => setTimeout(res, (Math.floor(Math.random() * (max - min + 1)) + min) * 1000));
 
@@ -160,7 +169,7 @@ async function connectToWhatsApp () {
                     for (const file of filesToBackup) {
                         if (fs.existsSync(file)) {
                             await sock.sendMessage(myNumber, {
-                                document: fs.readFileSync(file),
+                                document: await fsp.readFile(file),
                                 mimetype: 'application/json',
                                 fileName: file.replace('./', '')
                             });
@@ -895,7 +904,7 @@ async function connectToWhatsApp () {
                 for (const file of filesToBackup) {
                     if (fs.existsSync(file)) {
                         await sock.sendMessage(sender, {
-                            document: fs.readFileSync(file),
+                            document: await fsp.readFile(file),
                             mimetype: 'application/json',
                             fileName: file.replace('./', '')
                         });
@@ -940,27 +949,27 @@ async function connectToWhatsApp () {
                     
                     for (let i = 0; i < batchGroups.length; i++) {
                         const groupJid = batchGroups[i];
-                    let groupName = "Tidak Diketahui";
-                    try {
-                        const metadata = await sock.groupMetadata(groupJid);
-                        groupName = metadata.subject;
-                    } catch(e) {}
+                        let groupName = "Tidak Diketahui";
+                        try {
+                            const metadata = await sock.groupMetadata(groupJid);
+                            groupName = metadata.subject;
+                        } catch(e) {}
 
-                    try {
-                        const canSend = await canSendToGroup(sock, groupJid);
-                        if (!canSend) {
-                            failedGroups.push(`- *${groupName}* (Ditutup/Bukan Admin)`);
-                            continue;
-                        }
+                        try {
+                            const canSend = await canSendToGroup(sock, groupJid);
+                            if (!canSend) {
+                                failedGroups.push(`- *${groupName}* (Ditutup/Bukan Admin)`);
+                                continue;
+                            }
 
-                        if (i > 0 && i % 10 === 0) {
-                            await randomDelay(20, 45);
-                        }
+                            if (i > 0 && i % 10 === 0) {
+                                await randomDelay(20, 45);
+                            }
 
-                        await sock.sendPresenceUpdate('composing', groupJid);
-                        await randomDelay(7, 15);
+                            await sock.sendPresenceUpdate('composing', groupJid);
+                            await randomDelay(7, 15);
 
-                        if (quotedMessage) {
+                            if (quotedMessage) {
                             const messageToForward = {
                                 key: { remoteJid: sender, id: quotedContext.stanzaId },
                                 message: quotedMessage
@@ -1077,25 +1086,25 @@ async function connectToWhatsApp () {
                     
                     for (let i = 0; i < batchGroups.length; i++) {
                         const groupJid = batchGroups[i];
-                    let groupName = "Tidak Diketahui";
-                    try {
-                        const metadata = await sock.groupMetadata(groupJid);
-                        groupName = metadata.subject;
-                    } catch(e) {}
+                        let groupName = "Tidak Diketahui";
+                        try {
+                            const metadata = await sock.groupMetadata(groupJid);
+                            groupName = metadata.subject;
+                        } catch(e) {}
 
-                    try {
-                        const canSend = await canSendToGroup(sock, groupJid);
-                        if (!canSend) {
-                            failedGroups.push(`- *${groupName}* (Ditutup/Bukan Admin)`);
-                            continue;
-                        }
+                        try {
+                            const canSend = await canSendToGroup(sock, groupJid);
+                            if (!canSend) {
+                                failedGroups.push(`- *${groupName}* (Ditutup/Bukan Admin)`);
+                                continue;
+                            }
 
-                        if (i > 0 && i % 10 === 0) await randomDelay(20, 45);
+                            if (i > 0 && i % 10 === 0) await randomDelay(20, 45);
 
-                        await sock.sendPresenceUpdate('composing', groupJid);
-                        await randomDelay(7, 15);
+                            await sock.sendPresenceUpdate('composing', groupJid);
+                            await randomDelay(7, 15);
 
-                        for (const item of validItems) {
+                            for (const item of validItems) {
                             if (item.type === 'text') {
                                 const safeBcText = addInvisibleRandomizer(item.data);
                                 await sock.sendMessage(groupJid, { text: safeBcText });
@@ -1204,19 +1213,21 @@ connectToWhatsApp();
 // Graceful shutdown — save all config before exit
 process.on('SIGINT', async () => {
     console.log('\n[SHUTDOWN] Saving configs...');
-    await await saveGroups();
+    await saveGroups();
     await saveAntiFwd();
     await saveCustomList();
     await saveSchedules();
     await saveLoops();
+    await saveMuted();
     console.log('[SHUTDOWN] Done. Bye!');
     process.exit(0);
 });
 process.on('SIGTERM', async () => {
-    await await saveGroups();
+    await saveGroups();
     await saveAntiFwd();
     await saveCustomList();
     await saveSchedules();
     await saveLoops();
+    await saveMuted();
     process.exit(0);
 });
