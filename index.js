@@ -379,6 +379,7 @@ async function connectToWhatsApp () {
                 menuText += "┣ 🛡️ *SATPAM GRUP*\n";
                 menuText += "┃ ⊳ *.menuon* / *.menuoff*\n";
                 menuText += "┃ ⊳ *.antispam* on/off\n";
+                menuText += "┃ ⊳ *.mute* / *.unmute* (Reply)\n";
                 menuText += "┃ ⊳ *.kick* (Sambil Reply)\n";
                 menuText += "┃ ⊳ *.tutup* / *.buka*\n┃\n";
                 
@@ -432,6 +433,8 @@ async function connectToWhatsApp () {
 • \`.tutup\` (Hanya admin yg bisa chat grup).
 • \`.buka\` (Semua peserta bisa chat).
 • \`.antispam on\` (Otomatis hapus link/forward dari anggota grup).
+• \`.mute\` (Reply chat orangnya untuk bungkam permanen/auto hapus).
+• \`.unmute\` (Reply chat lamanya untuk buka segel).
 • \`.kick\` (Sambil reply chat orangnya untuk menendang).`;
             await sock.sendMessage(sender, { text: panduanText });
         }
