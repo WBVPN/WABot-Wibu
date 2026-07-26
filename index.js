@@ -527,7 +527,8 @@ async function connectToWhatsApp () {
                 } else {
                     let txt = `🔁 *Daftar Jadwal Loop (Otomatis Kirim):*\n\n`;
                     keys.sort((a,b)=>parseInt(a)-parseInt(b)).forEach(k => {
-                        txt += `• Otomatis ngirim setiap *${k} jam*\n`;
+                        let snippet = loops[k].message.length > 35 ? loops[k].message.substring(0, 35).replace(/\n/g, ' ') + '...' : loops[k].message.replace(/\n/g, ' ');
+                        txt += `• Setiap *${k} jam* 👉 _${snippet}_\n`;
                     });
                     await sock.sendMessage(sender, { text: txt });
                 }
@@ -579,7 +580,10 @@ async function connectToWhatsApp () {
                     await sock.sendMessage(sender, { text: `📊 Belum ada jadwal BC otomatis yang dibuat.` });
                 } else {
                     let txt = `⏰ *Daftar Jadwal Auto-Broadcast (WIB):*\n\n`;
-                    keys.sort().forEach(k => txt += `• Pukul *${k}*\n`);
+                    keys.sort().forEach(k => {
+                        let snippet = schedules[k].length > 35 ? schedules[k].substring(0, 35).replace(/\n/g, ' ') + '...' : schedules[k].replace(/\n/g, ' ');
+                        txt += `• Pukul *${k}* 👉 _${snippet}_\n`;
+                    });
                     await sock.sendMessage(sender, { text: txt });
                 }
             }
