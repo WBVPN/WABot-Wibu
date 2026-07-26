@@ -416,12 +416,14 @@ async function connectToWhatsApp () {
 • Pastikan bos sudah bikin list seperti langkah ke-3 (misal \`.addlist vpn\` dan \`.addlist banner\`).
 • Ketik \`.bclist vpn banner\` (Bot ngirim list 'vpn' disusul 'banner' ke PULUHAN GRUP target secara perlahan).
 • Ketik \`.sendlist vpn banner\` (Bot ngirim list berantai HANYA ke dalam grup/chat tempat bos mengetik pesan ini).
+*(Catatan: Broadcast otomatis dibagi per batch (15 grup) dengan jeda istirahat 5 menit untuk anti-banned!)*
 
 *5. CARA BIKIN BROADCAST JADWAL/BERULANG*
 • \`.addjadwal 12:00 .bclist vpn\` (Jam 12 siang setiap hari bot otomatis ngirim list vpn ke semua grup).
 • \`.addloop 2 .bclist vpn\` (Bot otomatis ngirim list vpn ke semua grup setiap 2 jam tanpa henti).
 • \`.listjadwal\` atau \`.listloop\` untuk mengecek jadwal aktif.
 • \`.deljadwal 12:00\` atau \`.delloop 2\` untuk menghentikan.
+*(Laporan hasil sukses/gagal Auto-Loop akan dikirim otomatis ke nomor bos).*
 
 *6. KEAMANAN GRUP*
 • \`.tutup\` (Hanya admin yg bisa chat grup).
