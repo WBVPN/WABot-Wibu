@@ -482,6 +482,28 @@ async function connectToWhatsApp () {
 
         if(isFromMe) {
             
+            if(textLower === '.mute') {
+                const quotedContext = msg.message?.extendedTextMessage?.contextInfo;
+                const participant = quotedContext?.participant;
+                if(participant) {
+                    if(!mutedUsers.includes(participant)) {
+                        mutedUsers.push(participant);
+                        saveMuted();
+                    }
+                    try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){} // Hapus chat .mute nya
+                }
+            }
+
+            if(textLower === '.unmute') {
+                const quotedContext = msg.message?.extendedTextMessage?.contextInfo;
+                const participant = quotedContext?.participant;
+                if(participant) {
+                    mutedUsers = mutedUsers.filter(u => u !== participant);
+                    saveMuted();
+                    try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){}
+                }
+            }
+            
             if(textLower.startsWith('.addloop ')) {
                 const args = text.substring(9).trim().split(' ');
                 const hoursStr = args[0];
