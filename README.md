@@ -31,7 +31,7 @@
 | **🥷 Mode Siluman (Stealth)** | Saat daftar grup target baru (`.add`), bot akan menghapus pesan perintah agar tak mencurigakan admin. |
 | **⏰ Jadwal & Auto-Loop** | Kirim promosi otomatis pada jam tertentu (misal 12:00) atau diulang secara periodik setiap sekian jam sekali. |
 | **🤖 Auto-Respon Pintar** | Simpan balasan kustom (gambar/teks panjang) via `.addlist`, memudahkan pelayanan pelanggan secara cepat. |
-| **👮 Satpam Grup** | Fitur tendang anggota (`.kick`), tutup/buka grup, perlindungan Anti-Spam / Anti-Forward untuk grup bisnis. |
+| **👮 Satpam Grup** | Fitur tendang anggota (`.kick`), bungkam member tanpa jejak (`.mute`), tutup/buka grup, perlindungan Anti-Spam / Anti-Forward untuk grup bisnis. |
 | **📱 Auto-Kirim QR ke Telegram** | Tidak perlu pantau *console* Pterodactyl! QR Code login akan langsung meluncur ke chat Telegram Anda! |
 
 ---
