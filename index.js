@@ -739,7 +739,7 @@ async function connectToWhatsApp () {
                 try { await sock.sendMessage(sender, { delete: msg.key }); } catch(e){}
             }
             
-            if(textLower.startsWith('.dell') && textLower !== '.dellall' && textLower !== '.dellist') {
+            if(textLower === '.dell' || textLower.startsWith('.dell ')) {
                 const parts = textLower.split(' ');
                 const myNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 
